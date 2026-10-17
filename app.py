@@ -399,7 +399,7 @@ let driveLane=0,driveDistance=0,driveObs=[];
  w.camera.position.set(0,4,8);w.camera.lookAt(0,0,-2);
  cube(w.scene,0x242b3a,0,-.3,-4,5,.3,20);
  for(const x of [-1.3,1.3])cube(w.scene,0x00eaff,x,-.12,-4,.04,.04,20);
- w.  const car=cube(w.scene,0xffb703,driveLane*1.3,.35,2,.8,.5,1.2);
+ const car=cube(w.scene,0xffb703,driveLane*1.3,.35,2,.8,.5,1.2);
 
   w.tick=()=>{
     car.position.x=driveLane*1.3;
