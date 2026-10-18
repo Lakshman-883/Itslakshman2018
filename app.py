@@ -33,10 +33,17 @@ section{padding:40px 6%;scroll-margin-top:70px}
 .alt{background:transparent;color:var(--blue)}
 input,select{width:100%;padding:12px;margin:8px 0;background:#050816;color:white;border:1px solid #00eaff66;border-radius:6px}
 .result{color:#8dffb1;min-height:25px;overflow-wrap:anywhere;margin-top:12px}
-canvas{display:block;max-width:100%;height:auto;margin:15px auto;border:1px solid var(--blue);background:#02060c}
-.game3d{width:100%;height:260px;border:1px solid #00eaff88;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse at 50% 0%,#172b52 0%,#02060c 72%);margin:12px 0;box-shadow:0 0 18px #00eaff18,inset 0 0 22px #00eaff12}
-.game3d canvas{filter:saturate(1.18) contrast(1.04)}
-.card{backdrop-filter:blur(8px)}
+canvas{display:block;max-width:100%;height:auto;margin:15px auto;border:1px solid var(--blue);background:linear-gradient(145deg,#071426,#02060c);box-shadow:0 12px 28px #0008,inset 0 0 18px #00eaff12;border-radius:10px}
+.card{position:relative;transform-style:preserve-3d;box-shadow:0 12px 24px #0005,inset 0 1px #ffffff0a;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.card:hover{transform:perspective(900px) rotateX(1.2deg) translateY(-3px);border-color:#00eaff99;box-shadow:0 18px 32px #0008,0 0 18px #00eaff10}
+.game3d{position:relative;isolation:isolate;box-shadow:inset 0 0 35px #00eaff12,0 12px 26px #0008}
+.game3d:after{content:"3D REALTIME WORLD";position:absolute;z-index:2;top:7px;left:8px;font-size:9px;letter-spacing:1.5px;color:#d9fbff99;pointer-events:none;text-shadow:0 1px 4px #000}
+.tile{box-shadow:inset 0 2px #ffffff12,0 4px 0 #050a16;transition:transform .12s,background .12s}
+.tile:active{transform:translateY(2px)}
+.btn{box-shadow:0 4px 0 #00121b,0 7px 14px #0005;transition:transform .12s,filter .12s}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 #00121b}
+@media(max-width:520px){section{padding:28px 4%}.card{padding:15px}.game3d{height:230px}#road,#snake{width:min(100%,300px);height:auto}.btn{padding:12px 13px;min-height:42px}}
+.game3d{width:100%;height:210px;border:1px solid #00eaff66;border-radius:8px;overflow:hidden;background:#02060c;margin:12px 0}
 .game3d canvas{width:100%;height:100%;margin:0;border:0;display:block}
 #memory{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:320px;margin:15px auto}
 .tile{height:48px;background:#101a35;color:var(--blue);border:1px solid var(--blue);border-radius:6px;font-size:20px}
@@ -108,7 +115,7 @@ footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eac
 
 <div class="card"><h3>🐍 Snake Game</h3>
 <p>Use arrow keys or touch controls.</p>
-<canvas id="snake" width="300" height="300"></canvas>
+<div style="perspective:900px;max-width:330px;margin:auto"><canvas id="snake" width="300" height="300" style="transform:rotateX(5deg);transform-origin:center;box-shadow:0 18px 28px #0009,0 0 20px #00eaff18"></canvas></div>
 <div style="text-align:center">
 <button class="btn" onclick="snakeDir(0,-1)">⬆️</button><br>
 <button class="btn" onclick="snakeDir(-1,0)">⬅️</button>
@@ -124,7 +131,7 @@ footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eac
 <select id="vehicle"><option value="bike">🏍️ Neon Bike</option><option value="car">🏎️ Super Car</option></select>
 <button class="btn" onclick="raceStart()">START RACE</button>
 <button class="btn alt" onclick="raceStop()">STOP</button>
-<canvas id="road" width="300" height="440"></canvas>
+<div style="perspective:850px;max-width:330px;margin:auto"><canvas id="road" width="300" height="440" style="transform:rotateX(4deg);transform-origin:center;box-shadow:0 22px 32px #000a,0 0 22px #00eaff14"></canvas></div>
 <div style="text-align:center">
 <button class="btn" onclick="raceMove(-1)">⬅️ LEFT</button>
 <button class="btn" onclick="raceMove(1)">RIGHT ➡️</button>
@@ -154,7 +161,6 @@ footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eac
 
 <div class="card"><h3>🚗 3D Drift Drive</h3>
 <p>Steer and avoid barriers.</p><div id="drive3d" class="game3d"></div>
-<button class="btn" onclick="driveStart()">START / RESTART</button>
 <button class="btn" onclick="driveMove(-1)">⬅️ LEFT</button>
 <button class="btn" onclick="driveMove(1)">RIGHT ➡️</button>
 <div id="driveOut" class="result">Distance: 0</div></div>
@@ -362,320 +368,320 @@ function addZombieModel(scene,x,z){
  function part(geo,mat,px,py,pz){const m=new THREE.Mesh(geo,mat);m.position.set(px,py,pz);g.add(m);return m;}
  part(new THREE.BoxGeometry(.48,.62,.3),cloth,0,.62,0);
  part(new THREE.SphereGeometry(.24,14,12),skin,0,1.12,0);
-  for(const ex of [-.09,.09]){
-  part(new THREE.SphereGeometry(.045,8,8),
-   new THREE.MeshStandardMaterial({color:0xff3030}),
-   ex,1.16,.2);
- }
-
- for(const x of [-.34,.34]){
-  const arm=part(
-   new THREE.BoxGeometry(.13,.45,.13),
-   cloth,x,.7,0
-  );
-  arm.rotation.z=x<0?-.3:.3;
-
-  for(const z of [-.13,.13]){
-   part(new THREE.BoxGeometry(.14,.4,.15),
-    cloth,x*.45,.23,z);
-  }
- }
-
- g.position.set(x,0,z);
- scene.add(g);
- return g;
+ for(const ex of [-.09,.09])part(new THREE.SphereGeometry(.045,8,8),new THREE.MeshStandardMaterial({color:0xff2929,emissive:0x8b0000}),ex,1.15,.2);
+ for(const lx of [-.15,.15]){part(new THREE.BoxGeometry(.14,.4,.15),cloth,lx,.22,0);part(new THREE.BoxGeometry(.12,.48,.13),skin,lx*2,.65,0);}
+ g.position.set(x,0,z);scene.add(g);return g;
 }
-
-// Neon Runner 3D
-const runnerWorld=makeWorld("runner3d",0x050b20);
-let runnerHero=null,runnerBlocks=[],runnerLane=0,runnerLive=false,runnerScore=0;
-
-if(runnerWorld){
- const s=runnerWorld.scene;
- const floor=cube(s,0x101a35,0,-.15,0,5,.2,18);
- runnerHero=addRunnerHero(s);
- runnerWorld.camera.position.set(0,3.5,7);
- runnerWorld.camera.lookAt(0,0,0);
-
- for(let i=0;i<18;i++){
-  cube(s,i%2?0x00eaff:0x174c78,-2.2,-.02,-i,0.04,.03,.6);
-  cube(s,i%2?0x00eaff:0x174c78,2.2,-.02,-i,0.04,.03,.6);
- }
+function addSpaceShip(scene){
+ const g=new THREE.Group(),metal=new THREE.MeshStandardMaterial({color:0x1a6d9b,metalness:.8,roughness:.2}),glow=new THREE.MeshStandardMaterial({color:0x00eaff,emissive:0x00aacc,emissiveIntensity:1.8});
+ function part(geo,mat,x,y,z){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m;}
+ part(new THREE.ConeGeometry(.32,.85,5),metal,0,.12,0).rotation.x=-Math.PI/2;
+ part(new THREE.BoxGeometry(.72,.08,.32),metal,0,-.05,.08);
+ part(new THREE.SphereGeometry(.14,12,10),glow,0,.13,.05);
+ for(const x of [-.22,.22])part(new THREE.CylinderGeometry(.045,.08,.3,10),glow,x,-.12,-.18);
+ g.position.set(0,.35,2);scene.add(g);return g;
 }
-
-function runnerStart(){
- if(!runnerWorld)return;
- runnerBlocks.forEach(b=>runnerWorld.scene.remove(b));
- runnerBlocks=[];
- runnerLane=0;
- runnerScore=0;
- runnerLive=true;
- runnerHero.position.x=0;
- $("runnerOut").textContent="Run! Avoid the blocks.";
- for(let i=0;i<5;i++){
-  const b=cube(runnerWorld.scene,0xff3155,
-   [-1.5,0,1.5][Math.floor(Math.random()*3)],
-   .45,-8-i*5,.7,.9,.7);
-  runnerBlocks.push(b);
- }
-}
-
-function runnerMove(d){
- if(!runnerLive)return;
- runnerLane=Math.max(-1,Math.min(1,runnerLane+d));
- runnerHero.position.x=runnerLane*1.5;
-}
-
-function runnerTick(){
- if(!runnerWorld)return;
- if(runnerLive){
-  runnerScore++;
-  runnerBlocks.forEach(b=>{
-   b.position.z+=.12;
-   if(b.position.z>2){
-    b.position.z=-25-Math.random()*10;
-    b.position.x=[-1.5,0,1.5][Math.floor(Math.random()*3)];
+// 1. Neon Runner 3D
+let runnerLane=0,runnerLive=false,runnerScore=0,runnerObs=[];
+(function(){
+ const w=makeWorld("runner3d");if(!w)return;
+ w.camera.position.set(0,4,7);w.camera.lookAt(0,0,-3);
+ cube(w.scene,0x15223d,0,-.25,-4,5,.3,18);
+ for(let x=-1;x<=1;x++)cube(w.scene,0x00eaff,x*1.3,.01,-4,.035,.02,18);
+ for(let i=0;i<18;i++){const z=2-i*1.2;cube(w.scene,0x142b48,-3,.25,z,.12,.5,.12);cube(w.scene,0x142b48,3,.25,z,.12,.5,.12);}
+ const player=addRunnerHero(w.scene);
+ w.tick=()=>{
+  player.position.x=runnerLane*1.3; player.rotation.z=Math.sin(Date.now()*.008)*.035;
+  runnerObs.forEach(o=>o.position.z+=.12);
+  runnerObs=runnerObs.filter(o=>{
+   if(o.position.z>4){w.scene.remove(o);return false}
+   if(runnerLive&&Math.abs(o.position.z-2)<.55&&Math.abs(o.position.x-player.position.x)<.65){
+    runnerLive=false;$("runnerOut").textContent="Crash! Score: "+runnerScore+". Restart to play.";
    }
-   if(Math.abs(b.position.z-2)<.6&&
-      Math.abs(b.position.x-runnerHero.position.x)<.65){
-    runnerLive=false;
-    $("runnerOut").textContent="Crash! Score: "+runnerScore;
-   }
+   return true;
   });
- }
-}
-
-// Zombie Survival 3D
-const zombieWorld=makeWorld("zombie3d",0x101408);
-let zombies=[],zombieScore=0,zombiePlayer={x:0,z:2};
-
-if(zombieWorld){
- const s=zombieWorld.scene;
- cube(s,0x253522,0,-.15,0,10,.2,10);
- zombieWorld.camera.position.set(0,5,8);
- zombieWorld.camera.lookAt(0,0,0);
-
- for(let i=0;i<6;i++){
-  zombies.push(addZombieModel(s,
-   (Math.random()-.5)*5,
-   (Math.random()-.5)*4-1));
- }
- zombieWorld.renderer.domElement.addEventListener("click",e=>{
-  const rect=e.target.getBoundingClientRect();
-  const mouse=new THREE.Vector2(
-   (e.clientX-rect.left)/rect.width*2-1,
-   -(e.clientY-rect.top)/rect.height*2+1
-  );
-  const ray=new THREE.Raycaster();
-  ray.setFromCamera(mouse,zombieWorld.camera);
-  const hits=ray.intersectObjects(zombieWorld.scene.children,true);
-  if(hits.length){
-   let obj=hits[0].object;
-   while(obj.parent&&!zombies.includes(obj))obj=obj.parent;
-   if(zombies.includes(obj)){
-    zombieWorld.scene.remove(obj);
-    zombies=zombies.filter(z=>z!==obj);
-    zombieScore++;
-    $("zombieOut").textContent="Zombies tagged: "+zombieScore;
-    const z=addZombieModel(zombieWorld.scene,
-     (Math.random()-.5)*5,
-     (Math.random()-.5)*4-1);
-    zombies.push(z);
-   }
+  if(runnerLive){
+   runnerScore++;$("runnerOut").textContent="Distance: "+runnerScore;
+   if(Math.random()<.025)runnerObs.push(cube(w.scene,0xff3864,([-1,0,1][Math.random()*3|0])*1.3,.45,-10,.7,.8,.7));
   }
- });
+ };
+})();
+function runnerStart(){
+ runnerLane=0;runnerLive=true;runnerScore=0;
+ if(scenes3d.runner3d)runnerObs.forEach(o=>scenes3d.runner3d.scene.remove(o));
+ runnerObs=[];$("runnerOut").textContent="Run! Dodge the blocks.";
 }
+function runnerMove(d){runnerLane=Math.max(-1,Math.min(1,runnerLane+d))}
 
+// 2. Zombie Survival 3D
+let zombieScore=0,zombies=[];
+(function(){
+ const w=makeWorld("zombie3d");if(!w)return;
+ w.camera.position.set(0,5,8);w.camera.lookAt(0,0,0);
+ cube(w.scene,0x18251f,0,-.3,0,10,.3,10);
+ function addZombie(){
+  const x=(Math.random()-.5)*5,z=(Math.random()-.5)*3;
+  const g=addZombieModel(w.scene,x,z);zombies.push(g);
+ }
+ for(let i=0;i<5;i++)addZombie();
+ w.renderer.domElement.addEventListener("click",e=>{
+  const r=w.renderer.domElement.getBoundingClientRect();
+  const mouse=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
+  const ray=new THREE.Raycaster();ray.setFromCamera(mouse,w.camera);
+  const hits=ray.intersectObjects(zombies,true);
+  if(!hits.length)return;
+  let g=hits[0].object;
+  while(g.parent&&g.parent!==w.scene)g=g.parent;
+  w.scene.remove(g);zombies=zombies.filter(z=>z!==g);
+  zombieScore++;$("zombieOut").textContent="Zombies tagged: "+zombieScore;
+  while(zombies.length<5)addZombie();
+ });
+})();
 function zombieMove(dx,dz){
- if(!zombieWorld)return;
- zombiePlayer.x=Math.max(-3,Math.min(3,zombiePlayer.x+dx));
- zombiePlayer.z=Math.max(-3,Math.min(3,zombiePlayer.z+dz));
- zombieWorld.camera.position.x=zombiePlayer.x;
- zombieWorld.camera.position.z=8+zombiePlayer.z;
- zombieWorld.camera.lookAt(zombiePlayer.x,0,0);
+ const w=scenes3d.zombie3d;if(!w)return;
+ w.camera.position.x=Math.max(-3,Math.min(3,w.camera.position.x+dx*.4));
+ w.camera.position.z=Math.max(5,Math.min(10,w.camera.position.z+dz*.4));
 }
 
-// 3D Drift Drive
-const driveWorld=makeWorld("drive3d",0x07101d);
-let driveCar=null,driveBlocks=[],driveRunning=false,driveDistance=0,driveLane=0;
+// 3. 3D Drift Drive
+let driveLane=0,driveDistance=0,driveObs=[];
+(function(){
+ const w=makeWorld("drive3d");if(!w)return;
+ w.camera.position.set(0,4,8);w.camera.lookAt(0,0,-2);
+ cube(w.scene,0x242b3a,0,-.3,-4,5,.3,20);
+ for(const x of [-1.3,1.3])cube(w.scene,0x00eaff,x,-.12,-4,.04,.04,20);
+ for(let i=0;i<18;i++){const z=3-i*1.3;cube(w.scene,0x526174,-3.2,.15,z,.18,.3,.18);cube(w.scene,0x526174,3.2,.15,z,.18,.3,.18);}
+ const car=addSportsCar(w.scene,0xffb703,driveLane*1.3,0,2);
 
-if(driveWorld){
- const s=driveWorld.scene;
- cube(s,0x26313d,0,-.15,0,5,.2,18);
- driveCar=addSportsCar(s,0x00c8ff,0,0,2);
- driveWorld.camera.position.set(0,3.4,7);
- driveWorld.camera.lookAt(0,.3,0);
+  w.tick=()=>{
+    car.position.x=driveLane*1.3; car.rotation.y=Math.sin(Date.now()*.003)*.025;
+    driveObs.forEach(o=>o.position.z+=.15);
 
- for(let i=0;i<12;i++){
-  cube(s,0xffffff,-2,-.02,-i, .06,.03,.5);
-  cube(s,0xffffff,2,-.02,-i, .06,.03,.5);
- }
-}
+    driveObs=driveObs.filter(o=>{
+      if(o.position.z>5){
+        w.scene.remove(o);
+        return false;
+      }
 
-function driveStart(){
- if(!driveWorld)return;
- driveBlocks.forEach(b=>driveWorld.scene.remove(b));
- driveBlocks=[];
- driveDistance=0;
- driveLane=0;
- driveRunning=true;
- driveCar.position.x=0;
- $("driveOut").textContent="Drive started!";
- for(let i=0;i<5;i++){
-  driveBlocks.push(cube(driveWorld.scene,0xff3355,
-   [-1.3,0,1.3][Math.floor(Math.random()*3)],
-   .4,-8-i*5,.8,.8,.8));
- }
-}
+      if(
+        Math.abs(o.position.z-2)<.7 &&
+        Math.abs(o.position.x-car.position.x)<.8
+      ){
+        $("driveOut").textContent=
+          "Crash! Distance: "+driveDistance+" — refresh to retry.";
+      }
 
+      return true;
+    });
+
+    driveDistance++;
+    $("driveOut").textContent="Distance: "+driveDistance;
+
+    if(Math.random()<.025){
+      const lane=([-1,0,1][Math.random()*3|0]);
+      driveObs.push(
+        addSportsCar(w.scene,0xff3864,lane*1.3,0,-12)
+      );
+    }
+  };
+})();
 function driveMove(d){
- if(!driveRunning)return;
- driveLane=Math.max(-1,Math.min(1,driveLane+d));
- driveCar.position.x=driveLane*1.3;
+  driveLane=Math.max(-1,Math.min(1,driveLane+d));
 }
 
-function driveTick(){
- if(!driveWorld||!driveRunning)return;
- driveDistance++;
- driveBlocks.forEach(b=>{
-  b.position.z+=.13;
-  if(b.position.z>2){
-   b.position.z=-25-Math.random()*10;
-   b.position.x=[-1.3,0,1.3][Math.floor(Math.random()*3)];
+// 4. Space Blaster 3D
+let spaceLane=0,spaceScore=0,spaceShots=[],spaceTargets=[];
+
+(function(){
+  const w=makeWorld("space3d",0x030014);
+  if(!w)return;
+
+  w.camera.position.set(0,4,8);
+  w.camera.lookAt(0,0,-3);
+
+  cube(w.scene,0x171737,0,-.4,-4,8,.3,20);
+
+  const ship=cube(
+    w.scene,0x00eaff,0,.35,2,.6,.35,.9
+  );
+
+  for(let i=0;i<35;i++){
+    const star=cube(
+      w.scene,0xffffff,
+      (Math.random()-.5)*8,
+      Math.random()*4,
+      -Math.random()*20,
+      .035,.035,.035
+    );
   }
-  if(Math.abs(b.position.z-driveCar.position.z)<.8&&
-     Math.abs(b.position.x-driveCar.position.x)<.8){
-   driveRunning=false;
-   $("driveOut").textContent="Crash! Distance: "+driveDistance+
-    ". Press START / RESTART.";
+
+  function addTarget(){
+    const target=cube(
+      w.scene,0xff3864,
+      ([-1,0,1][Math.random()*3|0])*1.3,
+      .4,
+      -12,
+      .6,.6,.6
+    );
+    spaceTargets.push(target);
   }
- });
- if(driveRunning)$("driveOut").textContent="Distance: "+driveDistance;
-}
 
-// Space Blaster 3D
-const spaceWorld=makeWorld("space3d",0x020414);
-let spaceShip=null,spaceTargets=[],spaceShots=[],spaceScore=0,spaceLane=0;
+  for(let i=0;i<4;i++)addTarget();
 
-if(spaceWorld){
- const s=spaceWorld.scene;
- spaceWorld.camera.position.set(0,4,8);
- spaceWorld.camera.lookAt(0,0,0);
+  w.tick=()=>{
+    ship.position.x=spaceLane*1.3;
 
- spaceShip=new THREE.Group();
- const body=new THREE.Mesh(
-  new THREE.ConeGeometry(.35,.9,5),
-  new THREE.MeshStandardMaterial({
-   color:0x00eaff,metalness:.6,roughness:.2,
-   emissive:0x003344
-  })
- );
- body.rotation.x=-Math.PI/2;
- spaceShip.add(body);
- spaceShip.position.set(0,0,2);
- s.add(spaceShip);
+    spaceTargets.forEach(t=>t.position.z+=.09);
+    spaceShots.forEach(s=>s.position.z-=.25);
 
- for(let i=0;i<20;i++){
-  sphere(s,0xffffff,(Math.random()-.5)*9,
-   Math.random()*5-1,-Math.random()*20,.035,6);
- }
- for(let i=0;i<5;i++){
-  spaceTargets.push(sphere(s,0xff3155,
-   (Math.random()-.5)*5,0,-4-i*4,.35,12));
- }
-}
+    spaceShots=spaceShots.filter(s=>{
+      if(s.position.z < -18){
+        w.scene.remove(s);
+        return false;
+      }
+      return true;
+    });
+
+    spaceTargets=spaceTargets.filter(t=>{
+      const hit=spaceShots.some(s=>
+        Math.abs(s.position.x-t.position.x)<.5 &&
+        Math.abs(s.position.z-t.position.z)<.6
+      );
+
+      if(hit){
+        w.scene.remove(t);
+        spaceScore++;
+        $("spaceOut").textContent="Targets hit: "+spaceScore;
+        return false;
+      }
+
+      if(t.position.z>5){
+        t.position.z=-12;
+        t.position.x=([-1,0,1][Math.random()*3|0])*1.3;
+      }
+
+      return true;
+    });
+
+    while(spaceTargets.length<4)addTarget();
+  };
+})();
 
 function spaceMove(d){
- if(!spaceShip)return;
- spaceLane=Math.max(-2,Math.min(2,spaceLane+d));
- spaceShip.position.x=spaceLane;
+  spaceLane=Math.max(-1,Math.min(1,spaceLane+d));
 }
 
 function spaceShoot(){
- if(!spaceWorld||!spaceShip)return;
- const shot=cube(spaceWorld.scene,0x00eaff,
-  spaceShip.position.x,0,1.4,.12,.12,.5);
- spaceShots.push(shot);
+  const w=scenes3d.space3d;
+  if(!w)return;
+
+  const shot=cube(
+    w.scene,0x00eaff,spaceLane*1.3,.4,1,.12,.12,.5
+  );
+
+  spaceShots.push(shot);
 }
 
-function spaceTick(){
- if(!spaceWorld)return;
- spaceShots.forEach(shot=>{
-  shot.position.z-=.25;
-  if(shot.position.z< -25){
-   spaceWorld.scene.remove(shot);
-  }
- });
- spaceShots=spaceShots.filter(s=>s.position.z>=-25);
-
- spaceTargets.forEach(target=>{
-  target.position.z+=.035;
-  if(target.position.z>4){
-   target.position.z=-20-Math.random()*10;
-   target.position.x=(Math.random()-.5)*4;
-  }
-
-  spaceShots.forEach(shot=>{
-   if(shot.position.distanceTo(target.position)<.65){
-    target.position.z=-20-Math.random()*10;
-    spaceScore++;
-    $("spaceOut").textContent="Targets hit: "+spaceScore;
-    shot.position.z=-30;
-   }
-  });
- });
-}
-
-// Animation loop
+// Three.js animation loop
 function animate3D(){
- requestAnimationFrame(animate3D);
- const t=performance.now()*.001;
+  requestAnimationFrame(animate3D);
 
- if(runnerHero&&runnerLive){
-  runnerHero.position.y=Math.abs(Math.sin(t*9))*.08;
- }
- if(runnerWorld){
-  runnerBlocks.forEach(b=>{b.rotation.y+=.01});
-  runnerWorld.renderer.render(runnerWorld.scene,runnerWorld.camera);
- }
- if(zombieWorld){
-  zombies.forEach((z,i)=>{z.rotation.y=Math.sin(t+i)*.15});
-  zombieWorld.renderer.render(zombieWorld.scene,zombieWorld.camera);
- }
- if(driveWorld){
-  driveBlocks.forEach(b=>{b.rotation.y+=.01});
-  driveWorld.renderer.render(driveWorld.scene,driveWorld.camera);
- }
- if(spaceWorld){
-  spaceTargets.forEach((z,i)=>{z.rotation.y+=.02;z.rotation.x+=.01});
-  spaceWorld.renderer.render(spaceWorld.scene,spaceWorld.camera);
- }
+  Object.values(scenes3d).forEach(w=>{
+    if(!w)return;
+
+    if(typeof w.tick==="function")w.tick();
+
+    w.renderer.render(w.scene,w.camera);
+  });
 }
-setInterval(runnerTick,50);
-setInterval(driveTick,50);
-setInterval(spaceTick,50);
-animate3D();
 
-// Terminal demo
+if(window.THREE){
+  animate3D();
+}
+// Terminal commands
 function command(){
- const input=$("cmd"),out=$("out");
- const c=input.value.trim().toLowerCase();
- if(!c)return;
- const cmds={
-  help:"Commands: help, about, games, racing, date, browser, device, network, clear",
-  about:"ItsLakshman2018 — futuristic digital world.",
-  games:"Available: Number Guess, RPS, Reflex, Memory, Snake.",
-  racing:"Neon Racing Arena is ready.",
-  date:new Date().toLocaleString(),
-  browser:navigator.userAgent,
-  device:"Screen: "+innerWidth+" x "+innerHeight,
-  network:navigator.onLine?"Browser reports online.":"Browser reports offline."
- };
- if(c==="clear")out.textContent="";
- else out.textContent+="\n> "+c+"\n"+(cmds[c]||"Unknown command. Type help.");
- input.value="";
- out.scrollTop=out.scrollHeight;
+  const input=$("cmd");
+  const out=$("out");
+  const cmd=input.value.trim().toLowerCase();
+
+  if(!cmd)return;
+
+  const commands={
+    help:
+      "Available commands:\n"+
+      "help, about, games, racing, date,\n"+
+      "browser, device, network, clear",
+
+    about:
+      "ItsLakshman2018 — Creator | Gamer | Digital Explorer",
+
+    games:
+      "Available games:\n"+
+      "Number Guess, Rock Paper Scissors,\n"+
+      "Reflex Test, Memory Matrix, Snake,\n"+
+      "Neon Runner 3D, Zombie Survival 3D,\n"+
+      "3D Drift Drive, Space Blaster 3D",
+
+    racing:
+      "Neon Racing Arena is ready.\n"+
+      "Choose a vehicle and press START RACE.",
+
+    date:
+      new Date().toLocaleString(),
+
+    browser:
+      "Browser: "+navigator.userAgent,
+
+    device:
+      "Screen: "+screen.width+" x "+screen.height,
+
+    network:
+      navigator.onLine
+        ? "Browser reports that you are online."
+        : "Browser reports that you are offline.",
+
+    clear:""
+  };
+
+  if(cmd==="clear"){
+    out.textContent="Terminal cleared.";
+  }else{
+    out.textContent+="\n\n> "+input.value+"\n"+
+      (commands[cmd]||"Unknown command. Type help.");
+  }
+
+  out.scrollTop=out.scrollHeight;
+  input.value="";
 }
+
+// Keyboard support for 3D games
+document.addEventListener("keydown",e=>{
+  if(["INPUT","TEXTAREA"].includes(
+    document.activeElement.tagName
+  ))return;
+
+  if(e.key==="ArrowLeft"){
+    runnerMove(-1);
+    driveMove(-1);
+    spaceMove(-1);
+  }
+
+  if(e.key==="ArrowRight"){
+    runnerMove(1);
+    driveMove(1);
+    spaceMove(1);
+  }
+
+  if(e.code==="Space"){
+    e.preventDefault();
+    spaceShoot();
+  }
+});
+
+// Keep the road drawing updated
+$("vehicle").addEventListener("change",drawRoad);
+
+// Flask routes are defined below in Python.
 </script>
 </body>
 </html>
@@ -691,4 +697,4 @@ def health():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port, debug=False)
