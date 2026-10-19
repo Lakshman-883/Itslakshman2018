@@ -52,7 +52,9 @@ canvas{display:block;max-width:100%;height:auto;margin:15px auto;border:1px soli
 #out{height:180px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
 .row{display:flex;gap:8px;align-items:center}
 .row input{flex:1;min-width:0}
-footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eacc7}footer a{color:#00eaff}kbd{border:1px solid #00eaff66;border-radius:4px;padding:2px 6px}
+footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eacc7}
+footer a{color:#00eaff}
+kbd{border:1px solid #00eaff66;border-radius:4px;padding:2px 6px}
 @media(max-width:600px){header{justify-content:center}nav{justify-content:center}section{padding:35px 5%}}
 </style>
 </head>
@@ -83,6 +85,7 @@ footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eac
 <div class="card"><h3>🏎️ Racing Arena</h3><p>Avoid traffic and race.</p></div>
 <div class="card"><h3>💻 Digital Terminal</h3><p>Try demo commands.</p></div>
 </div></section>
+
 <section id="games">
 <h2 class="heading">🎮 GAMING ZONE</h2><div class="grid">
 <div class="card"><h3>🔢 Number Guess</h3>
@@ -110,71 +113,98 @@ footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eac
 
 <div class="card"><h3>🐍 Snake Game</h3>
 <p>Use arrow keys or touch controls.</p>
-<div style="perspective:900px;max-width:330px;margin:auto"><canvas id="snake" width="300" height="300" style="transform:rotateX(5deg);transform-origin:center;box-shadow:0 18px 28px #0009,0 0 20px #00eaff18"></canvas></div>
+<div style="perspective:900px;max-width:330px;margin:auto">
+<canvas id="snake" width="300" height="300" style="transform:rotateX(5deg);transform-origin:center;box-shadow:0 18px 28px #0009,0 0 20px #00eaff18"></canvas>
+</div>
 <div style="text-align:center">
 <button class="btn" onclick="snakeDir(0,-1)">⬆️</button><br>
 <button class="btn" onclick="snakeDir(-1,0)">⬅️</button>
 <button class="btn" onclick="snakeDir(0,1)">⬇️</button>
 <button class="btn" onclick="snakeDir(1,0)">➡️</button><br>
 <button class="btn alt" onclick="snakeStart()">RESTART</button>
-</div><div id="snakeOut" class="result">Score: 0</div></div>
+</div>
+<div id="snakeOut" class="result">Score: 0</div></div>
 </div></section>
-
 <section id="race">
-<h2 class="heading">🏁 NEON RACING ARENA</h2><div class="card">
+<h2 class="heading">🏁 NEON RACING ARENA</h2>
+<div class="card">
 <h3>Choose Your Vehicle</h3>
-<select id="vehicle"><option value="bike">🏍️ Neon Bike</option><option value="car">🏎️ Super Car</option></select>
+<select id="vehicle">
+<option value="bike">🏍️ Neon Bike</option>
+<option value="car">🏎️ Super Car</option>
+</select>
 <button class="btn" onclick="raceStart()">START RACE</button>
 <button class="btn alt" onclick="raceStop()">STOP</button>
-<div style="perspective:850px;max-width:330px;margin:auto"><canvas id="road" width="300" height="440" style="transform:rotateX(4deg);transform-origin:center;box-shadow:0 22px 32px #000a,0 0 22px #00eaff14"></canvas></div>
+<div style="perspective:850px;max-width:330px;margin:auto">
+<canvas id="road" width="300" height="440" style="transform:rotateX(4deg);transform-origin:center;box-shadow:0 22px 32px #000a,0 0 22px #00eaff14"></canvas>
+</div>
 <div style="text-align:center">
 <button class="btn" onclick="raceMove(-1)">⬅️ LEFT</button>
 <button class="btn" onclick="raceMove(1)">RIGHT ➡️</button>
 </div>
 <div id="raceOut" class="result">Choose a vehicle and start.</div>
 <p>Desktop: arrow keys. Mobile: use the buttons.</p>
-</div></section>
+</div>
+</section>
 
 <section id="3dgames">
 <h2 class="heading">🕹️ 3D GAMING ZONE</h2>
 <p style="text-align:center;color:#c3cce0">Play the 3D browser games.</p>
 <div class="grid">
-<div class="card"><h3>🏃 Neon Runner 3D</h3>
-<p>Switch lanes and dodge blocks.</p><div id="runner3d" class="game3d"></div>
+
+<div class="card">
+<h3>🏃 Neon Runner 3D</h3>
+<p>Switch lanes and dodge blocks.</p>
+<div id="runner3d" class="game3d"></div>
 <button class="btn" onclick="runnerMove(-1)">⬅️</button>
 <button class="btn" onclick="runnerStart()">START / RESTART</button>
 <button class="btn" onclick="runnerMove(1)">➡️</button>
-<div id="runnerOut" class="result">Press start.</div></div>
+<div id="runnerOut" class="result">Press start.</div>
+</div>
 
-<div class="card"><h3>🧟 Zombie Survival 3D</h3>
-<p>Click zombies to tag them.</p><div id="zombie3d" class="game3d"></div>
+<div class="card">
+<h3>🧟 Zombie Survival 3D</h3>
+<p>Click zombies to tag them.</p>
+<div id="zombie3d" class="game3d"></div>
 <button class="btn" onclick="zombieMove(-1,0)">⬅️</button>
 <button class="btn" onclick="zombieMove(0,-1)">⬆️</button>
 <button class="btn" onclick="zombieMove(0,1)">⬇️</button>
 <button class="btn" onclick="zombieMove(1,0)">➡️</button>
-<div id="zombieOut" class="result">Click a zombie to score.</div></div>
+<div id="zombieOut" class="result">Click a zombie to score.</div>
+</div>
 
-<div class="card"><h3>🚗 3D Drift Drive</h3>
-<p>Steer and avoid barriers.</p><div id="drive3d" class="game3d"></div>
+<div class="card">
+<h3>🚗 3D Drift Drive</h3>
+<p>Steer and avoid barriers.</p>
+<div id="drive3d" class="game3d"></div>
 <button class="btn" onclick="driveMove(-1)">⬅️ LEFT</button>
 <button class="btn" onclick="driveMove(1)">RIGHT ➡️</button>
-<div id="driveOut" class="result">Distance: 0</div></div>
+<div id="driveOut" class="result">Distance: 0</div>
+</div>
 
-<div class="card"><h3>🚀 Space Blaster 3D</h3>
-<p>Move your ship and fire.</p><div id="space3d" class="game3d"></div>
+<div class="card">
+<h3>🚀 Space Blaster 3D</h3>
+<p>Move your ship and fire.</p>
+<div id="space3d" class="game3d"></div>
 <button class="btn" onclick="spaceMove(-1)">⬅️</button>
 <button class="btn" onclick="spaceShoot()">🔥 FIRE</button>
 <button class="btn" onclick="spaceMove(1)">➡️</button>
-<div id="spaceOut" class="result">Targets hit: 0</div></div>
-</div></section>
+<div id="spaceOut" class="result">Targets hit: 0</div>
+</div>
+
+</div>
+</section>
 
 <section id="terminal">
-<h2 class="heading">💻 DIGITAL TERMINAL</h2><div class="terminal">
+<h2 class="heading">💻 DIGITAL TERMINAL</h2>
+<div class="terminal">
 <div id="out">Welcome to Lakshman Terminal.
 Type help to see available commands.</div>
-<div class="row"><span>&gt;</span>
+<div class="row">
+<span>&gt;</span>
 <input id="cmd" placeholder="Type a command" autocomplete="off">
-<button class="btn" onclick="command()">RUN</button></div>
+<button class="btn" onclick="command()">RUN</button>
+</div>
 </div>
 <p>Commands: help, about, games, racing, date, browser, device, network, clear</p>
 <p style="color:#9eacc7">Demo terminal only. It cannot execute real operating-system commands.</p>
@@ -185,214 +215,829 @@ Type help to see available commands.</div>
 <div class="card">
 <p>Shared settings for the browser games. Graphics presets are best-effort and depend on device/browser support.</p>
 <div class="grid">
-<div><label for="gfxQuality">Graphics quality</label><select id="gfxQuality"><option value="auto">Auto</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="ultra">Ultra</option></select></div>
-<div><label for="masterVolume">Master volume (saved setting)</label><input id="masterVolume" type="range" min="0" max="1" step="0.05"></div>
-<div><label for="musicVolume">Music volume (saved setting)</label><input id="musicVolume" type="range" min="0" max="1" step="0.05"></div>
-<div><label for="sfxVolume">SFX volume (saved setting)</label><input id="sfxVolume" type="range" min="0" max="1" step="0.05"></div>
+<div>
+<label for="gfxQuality">Graphics quality</label>
+<select id="gfxQuality">
+<option value="auto">Auto</option>
+<option value="low">Low</option>
+<option value="medium">Medium</option>
+<option value="high">High</option>
+<option value="ultra">Ultra</option>
+</select>
 </div>
+<div>
+<label for="masterVolume">Master volume (saved setting)</label>
+<input id="masterVolume" type="range" min="0" max="1" step="0.05">
+</div>
+<div>
+<label for="musicVolume">Music volume (saved setting)</label>
+<input id="musicVolume" type="range" min="0" max="1" step="0.05">
+</div>
+<div>
+<label for="sfxVolume">SFX volume (saved setting)</label>
+<input id="sfxVolume" type="range" min="0" max="1" step="0.05">
+</div>
+</div>
+
 <div class="grid">
-<div class="card"><h3>Player Progress</h3><p>Level: <strong id="playerLevel">1</strong></p><p>Total XP: <strong id="playerXP">0</strong></p></div>
-<div class="card"><h3>Save Status</h3><p id="saveStatus" class="result" aria-live="polite">Local save ready.</p><button class="btn" id="saveNow">SAVE NOW</button></div>
-<div class="card"><h3>Game Controls</h3><p>Use the in-game buttons or keyboard arrows. Press <kbd>P</kbd> to pause/resume the 3D simulation.</p><button class="btn" id="pauseToggle">PAUSE 3D GAMES</button><p id="pauseStatus" class="result">Games running</p></div>
+<div class="card">
+<h3>Player Progress</h3>
+<p>Level: <strong id="playerLevel">1</strong></p>
+<p>Total XP: <strong id="playerXP">0</strong></p>
 </div>
+<div class="card">
+<h3>Save Status</h3>
+<p id="saveStatus" class="result" aria-live="polite">Local save ready.</p>
+<button class="btn" id="saveNow">SAVE NOW</button>
+</div>
+<div class="card">
+<h3>Game Controls</h3>
+<p>Use the in-game buttons or keyboard arrows. Press <kbd>P</kbd> to pause/resume the 3D simulation.</p>
+<button class="btn" id="pauseToggle">PAUSE 3D GAMES</button>
+<p id="pauseStatus" class="result">Games running</p>
+</div>
+</div>
+
 <p style="color:#9eacc7">Local saves stay in this browser/device. Clearing browser data may erase progress. Audio sliders store preferences; actual sound playback must be connected to game audio assets separately.</p>
-</div></section>
+</div>
+</section>
 
 <section id="contact">
-<h2 class="heading">CONTACT ME</h2><div class="card" style="text-align:center">
-<h3>Let's Connect</h3><p>Follow my social media for updates.</p>
+<h2 class="heading">CONTACT ME</h2>
+<div class="card" style="text-align:center">
+<h3>Let's Connect</h3>
+<p>Follow my social media for updates.</p>
 <a class="btn" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
-</div></section>
+</div>
+</section>
 
-<footer>© <span id="year"></span> LAKSHMAN_2018 | Digital World ⚡<br><p><a href="#home">Home</a> · <a href="#about">About</a> · <a href="#projects">Projects</a> · <a href="#games">Mini-games</a> · <a href="#race">Racing</a> · <a href="#3dgames">3D games</a> · <a href="#settings">Gaming settings</a> · <a href="#terminal">Terminal</a> · <a href="#contact">Contact</a></p></footer>
+<footer>
+© <span id="year"></span> LAKSHMAN_2018 | Digital World ⚡
+<br>
+<p>
+<a href="#home">Home</a> ·
+<a href="#about">About</a> ·
+<a href="#projects">Projects</a> ·
+<a href="#games">Mini-games</a> ·
+<a href="#race">Racing</a> ·
+<a href="#3dgames">3D games</a> ·
+<a href="#settings">Gaming settings</a> ·
+<a href="#terminal">Terminal</a> ·
+<a href="#contact">Contact</a>
+</p>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
-// 3D game animation loop
-let paused3D=false;
-const gameClock=new THREE.Clock();
+const $ = id => document.getElementById(id);
 
-function animate3D(){
- requestAnimationFrame(animate3D);
- const dt=Math.min(gameClock.getDelta(),.05);
+let xp = 0;
+let paused = false;
+let guessTarget = Math.floor(Math.random() * 100) + 1;
+let guessAttempts = 0;
 
- Object.values(scenes3d).forEach(w=>{
-  if(!w||!w.renderer||!w.scene||!w.camera)return;
-  if(!paused3D&&typeof w.tick==="function")w.tick(dt);
-  w.renderer.render(w.scene,w.camera);
- });
-}
-animate3D();
+if ($("year")) $("year").textContent = new Date().getFullYear();
 
-// Pause/resume 3D simulations
-function toggle3DPause(){
- paused3D=!paused3D;
- const button=$("pauseToggle");
- const status=$("pauseStatus");
-
- if(button)button.textContent=paused3D?"RESUME 3D GAMES":"PAUSE 3D GAMES";
- if(status)status.textContent=paused3D?"Games paused":"Games running";
-}
-
-if($("pauseToggle")){
- $("pauseToggle").addEventListener("click",toggle3DPause);
-}
-
-document.addEventListener("keydown",e=>{
- if(e.key.toLowerCase()==="p"&&!["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)){
-  toggle3DPause();
- }
-});
-
-// Graphics quality preference
-if($("gfxQuality")){
- $("gfxQuality").addEventListener("change",()=>{
-  const quality=$("gfxQuality").value;
-  const pixelRatio=quality==="low"?1:
-                   quality==="medium"?1.25:
-                   quality==="high"?1.75:
-                   quality==="ultra"?2:
-                   Math.min(window.devicePixelRatio||1,1.5);
-
-  Object.values(scenes3d).forEach(w=>{
-   if(w&&w.renderer){
-    w.renderer.setPixelRatio(pixelRatio);
-    w.renderer.setSize(w.host.clientWidth||300,w.host.clientHeight||210);
-   }
-  });
- });
-}
-// Terminal commands
-function command(){
- const input=$("cmd");
- const output=$("out");
- if(!input||!output)return;
-
- const cmd=input.value.trim().toLowerCase();
- input.value="";
- if(!cmd)return;
-
- const commands={
-  help:"Available commands: help, about, games, racing, date, browser, device, network, clear",
-  about:"LAKSHMAN_2018 — Welcome to my Digital World!",
-  games:"Available games: Mini-games, Racing Arena, Neon Runner, Zombie Survival, Drift Drive and Space Blaster.",
-  racing:"Racing Arena: Use the left and right arrow buttons to avoid obstacles.",
-  date:new Date().toLocaleString(),
-  browser:"Browser: "+navigator.userAgent,
-  device:"Screen: "+screen.width+" × "+screen.height,
-  network:navigator.onLine?"Network status: Online":"Network status: Offline"
- };
-
- if(cmd==="clear"){
-  output.textContent="Terminal cleared. Type help to see commands.";
-  return;
- }
-
- output.textContent+="\n\n> "+cmd+"\n"+(commands[cmd]||"Unknown command. Type help to see available commands.");
-}
-
-// Terminal Enter key
-if($("cmd")){
- $("cmd").addEventListener("keydown",e=>{
-  if(e.key==="Enter")command();
- });
-}
-
-// Update footer year
-if($("year"))$("year").textContent=new Date().getFullYear();
-
-// Settings defaults
-const settingsDefaults={
- gfxQuality:"auto",
- masterVolume:"0.8",
- musicVolume:"0.5",
- sfxVolume:"0.8"
-};
-
-function loadSettings(){
- Object.entries(settingsDefaults).forEach(([id,value])=>{
-  const el=$(id);
-  if(!el)return;
-  try{
-   el.value=localStorage.getItem("lakshman_"+id)||value;
-  }catch(err){
-   el.value=value;
+function addXP(amount) {
+  xp += Math.max(0, Number(amount) || 0);
+  if ($("playerXP")) $("playerXP").textContent = xp;
+  if ($("playerLevel")) {
+    $("playerLevel").textContent = Math.floor(xp / 100) + 1;
   }
- });
+  saveProgress();
 }
 
-function saveSettings(){
- Object.keys(settingsDefaults).forEach(id=>{
-  const el=$(id);
-  if(!el)return;
-  try{
-   localStorage.setItem("lakshman_"+id,el.value);
-  }catch(err){}
- });
-
- if($("saveStatus"))$("saveStatus").textContent="Settings saved on this device.";
+function saveProgress() {
+  try {
+    localStorage.setItem("lakshman_xp", String(xp));
+  } catch (e) {}
 }
 
-loadSettings();
+function loadProgress() {
+  try {
+    xp = Math.max(0, Number(localStorage.getItem("lakshman_xp")) || 0);
+  } catch (e) {
+    xp = 0;
+  }
 
-["gfxQuality","masterVolume","musicVolume","sfxVolume"].forEach(id=>{
- const el=$(id);
- if(el){
-  el.addEventListener("change",saveSettings);
-  el.addEventListener("input",()=>{
-   if(id!=="gfxQuality")saveSettings();
-  });
- }
-});
-
-if($("saveNow"))$("saveNow").addEventListener("click",saveSettings);
-// Player progress and XP
-let playerXP=0;
-let playerLevel=1;
-
-function addXP(amount){
- playerXP+=Math.max(0,Number(amount)||0);
- playerLevel=Math.floor(playerXP/100)+1;
-
- if($("playerXP"))$("playerXP").textContent=playerXP;
- if($("playerLevel"))$("playerLevel").textContent=playerLevel;
-
- saveProgress();
-}
-
-function saveProgress(){
- try{
-  localStorage.setItem("lakshman_playerXP",String(playerXP));
-  localStorage.setItem("lakshman_playerLevel",String(playerLevel));
- }catch(err){}
-}
-
-function loadProgress(){
- try{
-  playerXP=Math.max(0,Number(localStorage.getItem("lakshman_playerXP"))||0);
-  playerLevel=Math.floor(playerXP/100)+1;
- }catch(err){
-  playerXP=0;
-  playerLevel=1;
- }
-
- if($("playerXP"))$("playerXP").textContent=playerXP;
- if($("playerLevel"))$("playerLevel").textContent=playerLevel;
+  if ($("playerXP")) $("playerXP").textContent = xp;
+  if ($("playerLevel")) {
+    $("playerLevel").textContent = Math.floor(xp / 100) + 1;
+  }
 }
 
 loadProgress();
 
-// Online/offline indicator
-window.addEventListener("online",()=>{
- if($("saveStatus"))$("saveStatus").textContent="Internet connected.";
-});
+// NUMBER GUESS GAME
+function checkGuess() {
+  const field = $("guessInput");
+  const output = $("guessOut");
+  if (!field || !output) return;
 
-window.addEventListener("offline",()=>{
- if($("saveStatus"))$("saveStatus").textContent="Offline. Local games remain available.";
-});
+  const value = Number(field.value);
 
-// Finish page initialization
-window.addEventListener("load",()=>{
- if($("year"))$("year").textContent=new Date().getFullYear();
- console.log("LAKSHMAN_2018 Digital World loaded.");
+  if (!Number.isInteger(value) || value < 1 || value > 100) {
+    output.textContent = "Enter a whole number from 1 to 100.";
+    return;
+  }
+
+  guessAttempts++;
+
+  if (value === guessTarget) {
+    output.textContent =
+      "Correct! Attempts: " + guessAttempts + ". New number started!";
+    addXP(10);
+    guessTarget = Math.floor(Math.random() * 100) + 1;
+    guessAttempts = 0;
+    field.value = "";
+  } else {
+    output.textContent = value < guessTarget
+      ? "Too low! Try a higher number."
+      : "Too high! Try a lower number.";
+  }
+}
+
+// ROCK PAPER SCISSORS
+function playRPS(choice) {
+  const output = $("rpsOut");
+  if (!output) return;
+
+  const choices = ["rock", "paper", "scissors"];
+  const computer = choices[Math.floor(Math.random() * choices.length)];
+
+  if (choice === computer) {
+    output.textContent = "Draw! Computer chose " + computer + ".";
+  } else if (
+    (choice === "rock" && computer === "scissors") ||
+    (choice === "paper" && computer === "rock") ||
+    (choice === "scissors" && computer === "paper")
+  ) {
+    output.textContent = "You win! Computer chose " + computer + ".";
+    addXP(5);
+  } else {
+    output.textContent = "Computer wins! It chose " + computer + ".";
+  }
+}
+
+// REFLEX GAME
+let reflexTimer = null;
+let reflexStartedAt = 0;
+let reflexReady = false;
+
+function reflexStart() {
+  const output = $("reflexOut");
+  if (!output) return;
+
+  clearTimeout(reflexTimer);
+  reflexReady = false;
+  output.textContent = "Wait for GO...";
+
+  reflexTimer = setTimeout(() => {
+    reflexReady = true;
+    reflexStartedAt = performance.now();
+    output.textContent = "GO! Click the reflex button now!";
+  }, 1000 + Math.random() * 3000);
+}
+
+function reflexClick() {
+  const output = $("reflexOut");
+  if (!output) return;
+
+  if (!reflexReady) {
+    clearTimeout(reflexTimer);
+    output.textContent = "Too early! Press start and wait for GO.";
+    return;
+  }
+
+  const elapsed = Math.round(performance.now() - reflexStartedAt);
+  reflexReady = false;
+  output.textContent = "Your reaction: " + elapsed + " ms";
+
+  if (elapsed < 350) addXP(5);
+}
+
+// MEMORY GAME
+let memoryPattern = [];
+let memoryIndex = 0;
+
+function memoryStart() {
+  memoryPattern = Array.from(
+    { length: 5 },
+    () => Math.floor(Math.random() * 4) + 1
+  );
+  memoryIndex = 0;
+
+  const output = $("memoryOut");
+  if (output) {
+    output.textContent = "Remember this sequence: " + memoryPattern.join(" ");
+  }
+}
+
+function memoryGuess(value) {
+  const output = $("memoryOut");
+  if (!output || memoryPattern.length === 0) return;
+
+  if (Number(value) !== memoryPattern[memoryIndex]) {
+    output.textContent = "Wrong sequence! Press start to try again.";
+    memoryPattern = [];
+    memoryIndex = 0;
+    return;
+  }
+
+  memoryIndex++;
+
+  if (memoryIndex === memoryPattern.length) {
+    output.textContent = "Excellent! You remembered the sequence!";
+    addXP(10);
+    memoryPattern = [];
+  } else {
+    output.textContent =
+      "Correct! Next number: " + (memoryIndex + 1) + " of " +
+      memoryPattern.length;
+  }
+}
+
+// PAUSE CONTROL
+function setPaused(value) {
+  paused = Boolean(value);
+  if ($("pauseStatus")) {
+    $("pauseStatus").textContent = paused ? "Games paused" : "Games running";
+  }
+  if ($("pauseToggle")) {
+    $("pauseToggle").textContent = paused
+      ? "RESUME 3D GAMES"
+      : "PAUSE 3D GAMES";
+  }
+}
+
+if ($("pauseToggle")) {
+  $("pauseToggle").addEventListener("click", () => setPaused(!paused));
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key.toLowerCase() === "p" && !event.repeat) {
+    setPaused(!paused);
+  }
 });
+// SNAKE GAME
+const snakeCanvas = $("snakeCanvas");
+const snakeCtx = snakeCanvas ? snakeCanvas.getContext("2d") : null;
+
+let snake = [{ x: 8, y: 8 }];
+let snakeFood = { x: 12, y: 12 };
+let snakeVelocity = { x: 1, y: 0 };
+let snakeScore = 0;
+let snakeLoop = null;
+const snakeCell = 15;
+const snakeSize = 20;
+
+function snakeDir(dx, dy) {
+  if (dx === -snakeVelocity.x && dy === -snakeVelocity.y) return;
+  snakeVelocity = { x: dx, y: dy };
+}
+
+function snakeStart() {
+  clearInterval(snakeLoop);
+  snake = [{ x: 8, y: 8 }];
+  snakeVelocity = { x: 1, y: 0 };
+  snakeScore = 0;
+  snakeFood = {
+    x: Math.floor(Math.random() * snakeSize),
+    y: Math.floor(Math.random() * snakeSize)
+  };
+
+  if ($("snakeOut")) $("snakeOut").textContent = "Score: 0";
+  snakeDraw();
+  snakeLoop = setInterval(snakeStep, 150);
+}
+
+function snakeStep() {
+  if (paused) return;
+
+  const head = {
+    x: snake[0].x + snakeVelocity.x,
+    y: snake[0].y + snakeVelocity.y
+  };
+
+  if (
+    head.x < 0 || head.y < 0 ||
+    head.x >= snakeSize || head.y >= snakeSize ||
+    snake.some(part => part.x === head.x && part.y === head.y)
+  ) {
+    clearInterval(snakeLoop);
+    if ($("snakeOut")) {
+      $("snakeOut").textContent = "Game over! Score: " + snakeScore;
+    }
+    return;
+  }
+
+  snake.unshift(head);
+
+  if (head.x === snakeFood.x && head.y === snakeFood.y) {
+    snakeScore++;
+    snakeFood = {
+      x: Math.floor(Math.random() * snakeSize),
+      y: Math.floor(Math.random() * snakeSize)
+    };
+    if ($("snakeOut")) {
+      $("snakeOut").textContent = "Score: " + snakeScore;
+    }
+    if (snakeScore % 5 === 0) addXP(5);
+  } else {
+    snake.pop();
+  }
+
+  snakeDraw();
+}
+
+function snakeDraw() {
+  if (!snakeCtx) return;
+
+  snakeCtx.fillStyle = "#07111e";
+  snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+
+  const cellW = snakeCanvas.width / snakeSize;
+  const cellH = snakeCanvas.height / snakeSize;
+
+  snakeCtx.fillStyle = "#ff477e";
+  snakeCtx.fillRect(
+    snakeFood.x * cellW,
+    snakeFood.y * cellH,
+    cellW - 1,
+    cellH - 1
+  );
+
+  snake.forEach((part, index) => {
+    snakeCtx.fillStyle = index === 0 ? "#00f5ff" : "#20bfa9";
+    snakeCtx.fillRect(
+      part.x * cellW,
+      part.y * cellH,
+      cellW - 1,
+      cellH - 1
+    );
+  });
+}
+
+// RACING GAME
+const roadCanvas = $("road");
+const roadCtx = roadCanvas ? roadCanvas.getContext("2d") : null;
+
+let raceLane = 1;
+let raceRunning = false;
+let raceFrame = null;
+let raceDistance = 0;
+let raceObstacles = [];
+let raceLastTime = 0;
+
+function raceMove(direction) {
+  raceLane = Math.max(0, Math.min(2, raceLane + direction));
+}
+
+function raceStart() {
+  raceStop();
+  raceLane = 1;
+  raceDistance = 0;
+  raceObstacles = [];
+  raceRunning = true;
+  raceLastTime = 0;
+
+  if ($("raceOut")) $("raceOut").textContent = "Race started!";
+  raceFrame = requestAnimationFrame(raceTick);
+}
+
+function raceStop() {
+  raceRunning = false;
+  if (raceFrame !== null) cancelAnimationFrame(raceFrame);
+  raceFrame = null;
+  if ($("raceOut")) {
+    $("raceOut").textContent = "Race stopped. Distance: " +
+      Math.floor(raceDistance);
+  }
+}
+
+function raceTick(time) {
+  if (!raceRunning) return;
+
+  if (!raceLastTime) raceLastTime = time;
+  const dt = Math.min((time - raceLastTime) / 16.67, 3);
+  raceLastTime = time;
+
+  if (!paused) {
+    raceDistance += dt;
+    if (Math.random() < 0.025 * dt) {
+      raceObstacles.push({
+        lane: Math.floor(Math.random() * 3),
+        y: -30
+      });
+    }
+
+    raceObstacles.forEach(obstacle => obstacle.y += 3 * dt);
+    raceObstacles = raceObstacles.filter(
+      obstacle => obstacle.y < (roadCanvas ? roadCanvas.height : 440) + 30
+    );
+
+    const hit = raceObstacles.some(
+      obstacle => obstacle.lane === raceLane &&
+        obstacle.y > 350 && obstacle.y < 410
+    );
+
+    if (hit) {
+      raceRunning = false;
+      if ($("raceOut")) {
+        $("raceOut").textContent =
+          "Collision! Distance: " + Math.floor(raceDistance);
+      }
+      addXP(Math.floor(raceDistance / 20));
+      raceDraw();
+      return;
+    }
+  }
+
+  raceDraw();
+
+  if ($("raceOut")) {
+    $("raceOut").textContent = "Distance: " + Math.floor(raceDistance);
+  }
+
+  raceFrame = requestAnimationFrame(raceTick);
+}
+
+function raceDraw() {
+  if (!roadCtx || !roadCanvas) return;
+
+  const w = roadCanvas.width;
+  const h = roadCanvas.height;
+
+  roadCtx.fillStyle = "#10182b";
+  roadCtx.fillRect(0, 0, w, h);
+
+  roadCtx.fillStyle = "#26334b";
+  roadCtx.fillRect(30, 0, w - 60, h);
+
+  roadCtx.strokeStyle = "#e4e9ff";
+  roadCtx.lineWidth = 3;
+  roadCtx.setLineDash([20, 20]);
+
+  roadCtx.beginPath();
+  roadCtx.moveTo(w / 2 - 40, 0);
+  roadCtx.lineTo(w / 2 - 40, h);
+  roadCtx.moveTo(w / 2 + 40, 0);
+  roadCtx.lineTo(w / 2 + 40, h);
+  roadCtx.stroke();
+  roadCtx.setLineDash([]);
+
+  raceObstacles.forEach(obstacle => {
+    const x = w / 2 + (obstacle.lane - 1) * 80;
+    roadCtx.fillStyle = "#ff426e";
+    roadCtx.fillRect(x - 13, obstacle.y, 26, 35);
+  });
+
+  const carX = w / 2 + (raceLane - 1) * 80;
+  roadCtx.fillStyle = $("vehicle")?.value === "bike"
+    ? "#00f5ff" : "#ffcf4a";
+  roadCtx.fillRect(carX - 15, h - 65, 30, 45);
+}
+
+if (roadCanvas) raceDraw();
+
+document.addEventListener("keydown", event => {
+  if (event.key === "ArrowLeft") {
+    raceMove(-1);
+    snakeDir(-1, 0);
+  }
+  if (event.key === "ArrowRight") {
+    raceMove(1);
+    snakeDir(1, 0);
+  }
+  if (event.key === "ArrowUp") snakeDir(0, -1);
+  if (event.key === "ArrowDown") snakeDir(0, 1);
+});
+// 3D GAME SETUP
+const scenes3d = {};
+let threeAnimationId = null;
+
+function create3DGame(id, color = 0x00eaff) {
+  const container = $(id);
+  if (!container || !window.THREE) {
+    if (container) {
+      container.textContent = "3D graphics unavailable. Check your internet connection.";
+    }
+    return null;
+  }
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x07111e);
+
+  const camera = new THREE.PerspectiveCamera(
+    60,
+    Math.max(container.clientWidth, 1) /
+      Math.max(container.clientHeight || 220, 1),
+    0.1,
+    100
+  );
+  camera.position.set(0, 2.5, 7);
+  camera.lookAt(0, 0, 0);
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+  } catch (error) {
+    container.textContent = "WebGL is not supported by this browser.";
+    return null;
+  }
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(
+    Math.max(container.clientWidth, 240),
+    Math.max(container.clientHeight || 220, 220)
+  );
+  container.replaceChildren(renderer.domElement);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x24304a, 2));
+
+  const light = new THREE.DirectionalLight(0xffffff, 2);
+  light.position.set(3, 5, 4);
+  scene.add(light);
+
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(12, 20),
+    new THREE.MeshStandardMaterial({
+      color: 0x142238,
+      roughness: 0.9
+    })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -1;
+  scene.add(floor);
+
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshStandardMaterial({
+    color,
+    metalness: 0.35,
+    roughness: 0.35
+  });
+
+  const player = new THREE.Mesh(geometry, material);
+  player.position.y = 0;
+  scene.add(player);
+
+  const objects = [];
+
+  for (let i = 0; i < 5; i++) {
+    const obstacle = new THREE.Mesh(
+      new THREE.BoxGeometry(0.65, 0.65, 0.65),
+      new THREE.MeshStandardMaterial({
+        color: i % 2 ? 0xff477e : 0x8b5cf6
+      })
+    );
+    obstacle.position.set(
+      (Math.random() - 0.5) * 4,
+      -0.3,
+      -i * 2 - 1
+    );
+    scene.add(obstacle);
+    objects.push(obstacle);
+  }
+
+  const game = {
+    scene,
+    camera,
+    renderer,
+    player,
+    objects,
+    score: 0,
+    x: 0,
+    running: false,
+    last: 0
+  };
+
+  scenes3d[id] = game;
+
+  function resize() {
+    if (!container.isConnected) return;
+    const width = Math.max(container.clientWidth, 240);
+    const height = Math.max(container.clientHeight || 220, 220);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
+
+  if (window.ResizeObserver) {
+    const observer = new ResizeObserver(resize);
+    observer.observe(container);
+    game.observer = observer;
+  } else {
+    window.addEventListener("resize", resize);
+  }
+
+  return game;
+}
+
+function animate3D() {
+  threeAnimationId = requestAnimationFrame(animate3D);
+
+  Object.values(scenes3d).forEach(game => {
+    if (!game || !game.renderer) return;
+
+    if (!paused && game.running) {
+      game.player.rotation.y += 0.015;
+
+      game.objects.forEach(object => {
+        object.rotation.x += 0.01;
+        object.rotation.y += 0.02;
+      });
+    }
+
+    game.renderer.render(game.scene, game.camera);
+  });
+}
+
+// RUNNER
+function runnerStart() {
+  const game = scenes3d.runner3d;
+  if (!game) return;
+
+  game.running = true;
+  game.score = 0;
+
+  if ($("runnerOut")) $("runnerOut").textContent = "Runner started!";
+}
+
+function runnerMove(direction) {
+  const game = scenes3d.runner3d;
+  if (!game) return;
+
+  game.x = Math.max(-2, Math.min(2, game.x + direction));
+  game.player.position.x = game.x;
+
+  if ($("runnerOut")) {
+    game.score++;
+    $("runnerOut").textContent = "Moves: " + game.score;
+  }
+}
+
+// ZOMBIE TAG GAME
+let zombieScore = 0;
+
+function zombieMove(dx, dz) {
+  const game = scenes3d.zombie3d;
+  if (!game) return;
+
+  game.player.position.x = Math.max(
+    -3,
+    Math.min(3, game.player.position.x + dx)
+  );
+  game.player.position.z += dz;
+}
+
+function zombieTag() {
+  zombieScore++;
+  if ($("zombieOut")) {
+    $("zombieOut").textContent = "Zombies tagged: " + zombieScore;
+  }
+  addXP(1);
+}
+
+// DRIVE GAME
+let driveDistance = 0;
+
+function driveMove(direction) {
+  const game = scenes3d.drive3d;
+  if (!game) return;
+
+  game.player.position.x = Math.max(
+    -2.5,
+    Math.min(2.5, game.player.position.x + direction)
+  );
+
+  driveDistance++;
+  if ($("driveOut")) {
+    $("driveOut").textContent = "Distance: " + driveDistance;
+  }
+}
+
+// SPACE GAME
+let spaceScore = 0;
+
+function spaceMove(direction) {
+  const game = scenes3d.space3d;
+  if (!game) return;
+
+  game.player.position.x = Math.max(
+    -3,
+    Math.min(3, game.player.position.x + direction)
+  );
+}
+
+function spaceShoot() {
+  const game = scenes3d.space3d;
+  if (!game) return;
+
+  spaceScore++;
+  if ($("spaceOut")) {
+    $("spaceOut").textContent = "Targets hit: " + spaceScore;
+  }
+  addXP(2);
+}
+
+// INITIALIZE 3D GAMES
+function init3DGames() {
+  if (!window.THREE) return;
+
+  create3DGame("runner3d", 0x00eaff);
+  create3DGame("zombie3d", 0x67b56b);
+  create3DGame("drive3d", 0xffcf4a);
+  create3DGame("space3d", 0x9b5cff);
+
+  if (!threeAnimationId) animate3D();
+}
+
+// TERMINAL COMMANDS
+function command() {
+  const input = $("cmd");
+  const output = $("out");
+  if (!input || !output) return;
+
+  const text = input.value.trim().toLowerCase();
+  input.value = "";
+
+  const commands = {
+    help: "Commands: help, about, games, racing, date, browser, device, network, clear",
+    about: "Lakshman Digital World — browser gaming project.",
+    games: "Available: Snake, Number Guess, RPS, Reflex, Memory and 3D demos.",
+    racing: "Open Racing Arena to start a race.",
+    date: new Date().toLocaleString(),
+    browser: navigator.userAgent,
+    device: screen.width + " × " + screen.height,
+    network: navigator.onLine ? "Browser reports online." : "Browser reports offline."
+  };
+
+  if (text === "clear") {
+    output.textContent = "";
+  } else {
+    output.textContent += "\n> " + text + "\n" +
+      (commands[text] || "Unknown command. Type help.");
+  }
+}
+
+if ($("cmd")) {
+  $("cmd").addEventListener("keydown", event => {
+    if (event.key === "Enter") command();
+  });
+}
+
+// SETTINGS SAVE / LOAD
+function saveSettings() {
+  const settings = {};
+
+  ["gfxQuality", "masterVolume", "musicVolume", "sfxVolume"].forEach(id => {
+    if ($(id)) settings[id] = $(id).value;
+  });
+
+  try {
+    localStorage.setItem("lakshman_settings", JSON.stringify(settings));
+    if ($("saveStatus")) $("saveStatus").textContent = "Settings saved.";
+  } catch (error) {
+    if ($("saveStatus")) $("saveStatus").textContent = "Unable to save in this browser.";
+  }
+}
+
+function loadSettings() {
+  try {
+    const settings = JSON.parse(
+      localStorage.getItem("lakshman_settings") || "{}"
+    );
+
+    Object.keys(settings).forEach(id => {
+      if ($(id)) $(id).value = settings[id];
+    });
+  } catch (error) {
+    // Keep default settings if saved data is unavailable.
+  }
+}
+
+if ($("saveNow")) $("saveNow").addEventListener("click", saveSettings);
+
+loadSettings();
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init3DGames, { once: true });
+} else {
+  init3DGames();
+}
+</script>
+</body>
+</html>
+"""
+
+@app.route("/")
+def home():
+    return render_template_string(HTML)
+
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
+    )
+ 
