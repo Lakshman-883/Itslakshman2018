@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template_string
 import os
 
@@ -51,19 +52,14 @@ canvas{display:block;max-width:100%;height:auto;margin:15px auto;border:1px soli
 #out{height:180px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
 .row{display:flex;gap:8px;align-items:center}
 .row input{flex:1;min-width:0}
-footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eacc7}
+footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eacc7}footer a{color:#00eaff}kbd{border:1px solid #00eaff66;border-radius:4px;padding:2px 6px}
 @media(max-width:600px){header{justify-content:center}nav{justify-content:center}section{padding:35px 5%}}
 </style>
 </head>
 <body>
 <header>
 <a class="logo" href="#home">LAKSHMAN_2018</a>
-<nav>
-<a href="#home">HOME</a><a href="#about">ABOUT</a>
-<a href="#projects">PROJECTS</a><a href="#games">GAMING</a>
-<a href="#race">RACING</a><a href="#3dgames">3D GAMES</a>
-<a href="#terminal">TERMINAL</a><a href="#contact">CONTACT</a>
-</nav>
+<a class="btn" href="#3dgames">PLAY GAMES</a>
 </header>
 
 <section id="home" class="hero"><div>
@@ -87,7 +83,6 @@ footer{text-align:center;padding:25px;border-top:1px solid #00eaff33;color:#9eac
 <div class="card"><h3>🏎️ Racing Arena</h3><p>Avoid traffic and race.</p></div>
 <div class="card"><h3>💻 Digital Terminal</h3><p>Try demo commands.</p></div>
 </div></section>
-
 <section id="games">
 <h2 class="heading">🎮 GAMING ZONE</h2><div class="grid">
 <div class="card"><h3>🔢 Number Guess</h3>
@@ -185,516 +180,219 @@ Type help to see available commands.</div>
 <p style="color:#9eacc7">Demo terminal only. It cannot execute real operating-system commands.</p>
 </section>
 
+<section id="settings">
+<h2 class="heading">⚙️ GAMING CONTROL CENTER</h2>
+<div class="card">
+<p>Shared settings for the browser games. Graphics presets are best-effort and depend on device/browser support.</p>
+<div class="grid">
+<div><label for="gfxQuality">Graphics quality</label><select id="gfxQuality"><option value="auto">Auto</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="ultra">Ultra</option></select></div>
+<div><label for="masterVolume">Master volume (saved setting)</label><input id="masterVolume" type="range" min="0" max="1" step="0.05"></div>
+<div><label for="musicVolume">Music volume (saved setting)</label><input id="musicVolume" type="range" min="0" max="1" step="0.05"></div>
+<div><label for="sfxVolume">SFX volume (saved setting)</label><input id="sfxVolume" type="range" min="0" max="1" step="0.05"></div>
+</div>
+<div class="grid">
+<div class="card"><h3>Player Progress</h3><p>Level: <strong id="playerLevel">1</strong></p><p>Total XP: <strong id="playerXP">0</strong></p></div>
+<div class="card"><h3>Save Status</h3><p id="saveStatus" class="result" aria-live="polite">Local save ready.</p><button class="btn" id="saveNow">SAVE NOW</button></div>
+<div class="card"><h3>Game Controls</h3><p>Use the in-game buttons or keyboard arrows. Press <kbd>P</kbd> to pause/resume the 3D simulation.</p><button class="btn" id="pauseToggle">PAUSE 3D GAMES</button><p id="pauseStatus" class="result">Games running</p></div>
+</div>
+<p style="color:#9eacc7">Local saves stay in this browser/device. Clearing browser data may erase progress. Audio sliders store preferences; actual sound playback must be connected to game audio assets separately.</p>
+</div></section>
+
 <section id="contact">
 <h2 class="heading">CONTACT ME</h2><div class="card" style="text-align:center">
 <h3>Let's Connect</h3><p>Follow my social media for updates.</p>
 <a class="btn" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
 </div></section>
 
-<footer>© <span id="year"></span> ItsLakshman2018 | Digital World ⚡</footer>
+<footer>© <span id="year"></span> LAKSHMAN_2018 | Digital World ⚡<br><p><a href="#home">Home</a> · <a href="#about">About</a> · <a href="#projects">Projects</a> · <a href="#games">Mini-games</a> · <a href="#race">Racing</a> · <a href="#3dgames">3D games</a> · <a href="#settings">Gaming settings</a> · <a href="#terminal">Terminal</a> · <a href="#contact">Contact</a></p></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
-const $=id=>document.getElementById(id);
-$("year").textContent=new Date().getFullYear();
+// 3D game animation loop
+let paused3D=false;
+const gameClock=new THREE.Clock();
 
-// Matrix background
-const bg=document.createElement("canvas");
-bg.style.cssText="position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:.12;pointer-events:none";
-document.body.prepend(bg);
-const bx=bg.getContext("2d");let drops=[];
-function resizeBg(){bg.width=innerWidth;bg.height=innerHeight;drops=Array(Math.ceil(bg.width/15)).fill(0)}
-window.addEventListener("resize",resizeBg);resizeBg();
-setInterval(()=>{
- bx.fillStyle="rgba(5,8,22,.18)";bx.fillRect(0,0,bg.width,bg.height);
- bx.fillStyle="#00eaff";bx.font="15px monospace";
- drops.forEach((y,i)=>{bx.fillText("01LAKSHMAN"[Math.random()*10|0],i*15,y*15);drops[i]=y*15>bg.height&&Math.random()>.97?0:y+1});
-},60);
+function animate3D(){
+ requestAnimationFrame(animate3D);
+ const dt=Math.min(gameClock.getDelta(),.05);
 
-// Number Guess
-let secret=Math.floor(Math.random()*100)+1,attempts=0;
-function guessGame(){
- const v=Number($("guess").value);
- if(!$("guess").value||v<1||v>100){$("guessOut").textContent="Enter a number from 1 to 100.";return}
- attempts++;
- $("guessOut").textContent=v===secret?"🎉 Correct! Attempts: "+attempts:v<secret?"Too low! Try higher.":"Too high! Try lower.";
+ Object.values(scenes3d).forEach(w=>{
+  if(!w||!w.renderer||!w.scene||!w.camera)return;
+  if(!paused3D&&typeof w.tick==="function")w.tick(dt);
+  w.renderer.render(w.scene,w.camera);
+ });
 }
-function resetGuess(){secret=Math.floor(Math.random()*100)+1;attempts=0;$("guess").value="";$("guessOut").textContent="New number generated!"}
+animate3D();
 
-// Rock Paper Scissors
-function rps(p){
- const a=["Rock","Paper","Scissors"],c=a[Math.floor(Math.random()*3)];
- const win=(p==="Rock"&&c==="Scissors")||(p==="Paper"&&c==="Rock")||(p==="Scissors"&&c==="Paper");
- $("rpsOut").textContent="You: "+p+" | Computer: "+c+" | "+(p===c?"Draw!":win?"You win!":"Computer wins!");
+// Pause/resume 3D simulations
+function toggle3DPause(){
+ paused3D=!paused3D;
+ const button=$("pauseToggle");
+ const status=$("pauseStatus");
+
+ if(button)button.textContent=paused3D?"RESUME 3D GAMES":"PAUSE 3D GAMES";
+ if(status)status.textContent=paused3D?"Games paused":"Games running";
 }
 
-// Reflex Test
-let state=0,reflexTimer=null,reflexTime=0;
-function reflexGame(){
- if(state===0){
-  state=1;$("reflex").textContent="WAIT...";$("reflex").style.background="#d62828";$("reflexOut").textContent="Wait for green!";
-  reflexTimer=setTimeout(()=>{state=2;reflexTime=performance.now();$("reflex").textContent="CLICK NOW!";$("reflex").style.background="#00d26a"},1500+Math.random()*2500);
- }else if(state===1){
-  clearTimeout(reflexTimer);state=0;$("reflexOut").textContent="Too early! Try again.";$("reflex").textContent="START TEST";$("reflex").style.background="";
- }else{
-  $("reflexOut").textContent="Reaction time: "+Math.round(performance.now()-reflexTime)+" ms";
-  state=0;$("reflex").textContent="START TEST";$("reflex").style.background="";
- }
+if($("pauseToggle")){
+ $("pauseToggle").addEventListener("click",toggle3DPause);
 }
 
-// Memory Matrix
-let memorySequence=[],memoryPick=[],memoryActive=false;
-function memoryStart(){
- const box=$("memory");box.innerHTML="";memorySequence=[];memoryPick=[];memoryActive=false;
- for(let i=0;i<16;i++){const b=document.createElement("button");b.className="tile";b.onclick=()=>memoryChoose(i,b);box.appendChild(b)}
- while(memorySequence.length<4){const n=Math.floor(Math.random()*16);if(!memorySequence.includes(n))memorySequence.push(n)}
- memorySequence.forEach(n=>box.children[n].style.background="#00eaff");
- $("memoryOut").textContent="Remember the highlighted tiles!";
- setTimeout(()=>{memorySequence.forEach(n=>box.children[n].style.background="#101a35");memoryActive=true;$("memoryOut").textContent="Tap the four tiles."},1100);
-}
-function memoryChoose(n,b){
- if(!memoryActive||memoryPick.includes(n))return;
- memoryPick.push(n);
- if(memorySequence.includes(n)){b.style.background="#00a86b";b.textContent="✓"}else{b.style.background="#b51e35";b.textContent="×"}
- if(memoryPick.length===4){memoryActive=false;const score=memoryPick.filter(n=>memorySequence.includes(n)).length;$("memoryOut").textContent=score===4?"🎉 Perfect memory!":"Score: "+score+"/4. Try again!"}
-}
-
-// Snake Game
-const snakeCanvas=$("snake"),sx=snakeCanvas.getContext("2d"),cell=15,board=20;
-let snake=[],food={x:10,y:10},dir={x:1,y:0},snakeTimer=null,snakeScore=0,snakeAlive=false;
-function snakeStart(){
- clearInterval(snakeTimer);snake=[{x:5,y:10},{x:4,y:10},{x:3,y:10}];dir={x:1,y:0};food={x:12,y:10};snakeScore=0;snakeAlive=true;$("snakeOut").textContent="Score: 0";drawSnake();snakeTimer=setInterval(snakeTick,130);
-}
-function snakeDir(x,y){if(x===-dir.x&&y===-dir.y)return;dir={x,y}}
-function snakeTick(){
- if(!snakeAlive)return;
- const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
- if(head.x<0||head.y<0||head.x>=board||head.y>=board||snake.some(s=>s.x===head.x&&s.y===head.y)){
-  snakeAlive=false;clearInterval(snakeTimer);$("snakeOut").textContent="Game over! Score: "+snakeScore+". Press RESTART.";return;
- }
- snake.unshift(head);
- if(head.x===food.x&&head.y===food.y){snakeScore++;food={x:Math.floor(Math.random()*board),y:Math.floor(Math.random()*board)};$("snakeOut").textContent="Score: "+snakeScore}else snake.pop();
- drawSnake();
-}
-function drawSnake(){
- sx.fillStyle="#02060c";sx.fillRect(0,0,300,300);sx.fillStyle="#ff477e";sx.fillRect(food.x*cell,food.y*cell,cell-1,cell-1);sx.fillStyle="#00eaff";snake.forEach(s=>sx.fillRect(s.x*cell,s.y*cell,cell-1,cell-1));
-}
-
-// Racing Game
-const road=$("road"),rx=road.getContext("2d");
-let playerLane=1,obstacles=[],raceRunning=false,raceTimer=null,raceScore=0;
-function raceStart(){raceStop();playerLane=1;obstacles=[];raceScore=0;raceRunning=true;$("raceOut").textContent="Race started! Avoid traffic.";raceTimer=setInterval(raceTick,100)}
-function raceStop(){raceRunning=false;clearInterval(raceTimer);raceTimer=null;drawRoad()}
-function raceMove(d){playerLane=Math.max(0,Math.min(2,playerLane+d));drawRoad()}
-function raceTick(){
- if(!raceRunning)return;
- if(Math.random()<.035)obstacles.push({lane:Math.floor(Math.random()*3),y:-45});
- obstacles.forEach(o=>o.y+=5);obstacles=obstacles.filter(o=>o.y<450);
- const py=365;
- if(obstacles.some(o=>o.lane===playerLane&&o.y>py-35&&o.y<py+35)){raceRunning=false;clearInterval(raceTimer);$("raceOut").textContent="Crash! Score: "+raceScore+". Restart to try again."}
- if(raceRunning){raceScore++;$("raceOut").textContent="Distance: "+raceScore}
- drawRoad();
-}
-function drawRoad(){
- rx.fillStyle="#111820";rx.fillRect(0,0,300,440);rx.fillStyle="#273340";rx.fillRect(25,0,250,440);
- rx.strokeStyle="#f7f7f7";rx.setLineDash([22,18]);rx.lineWidth=3;rx.beginPath();rx.moveTo(108,0);rx.lineTo(108,440);rx.moveTo(192,0);rx.lineTo(192,440);rx.stroke();rx.setLineDash([]);
- const px=66+playerLane*84;rx.fillStyle=$("vehicle").value==="bike"?"#00eaff":"#ffb703";rx.fillRect(px-13,365,26,42);
- rx.fillStyle="#ff304f";obstacles.forEach(o=>rx.fillRect(66+o.lane*84-15,o.y,30,40));
-}
-drawRoad();
-
-// Keyboard controls
 document.addEventListener("keydown",e=>{
- if(e.key==="ArrowLeft"){if(raceRunning)raceMove(-1);else snakeDir(-1,0)}
- if(e.key==="ArrowRight"){if(raceRunning)raceMove(1);else snakeDir(1,0)}
- if(e.key==="ArrowUp")snakeDir(0,-1);
- if(e.key==="ArrowDown")snakeDir(0,1);
- if(e.key==="Enter"&&document.activeElement===$("cmd"))command();
+ if(e.key.toLowerCase()==="p"&&!["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)){
+  toggle3DPause();
+ }
 });
 
-// 3D game setup
-const scenes3d={};
-function makeWorld(id,bgColor=0x020817){
- const host=$(id);
- if(!host||!window.THREE){if(host)host.textContent="3D library failed to load. Check internet.";return null}
- const scene=new THREE.Scene();scene.background=new THREE.Color(bgColor);
- const camera=new THREE.PerspectiveCamera(65,(host.clientWidth||300)/(host.clientHeight||210),.1,100);
- camera.position.set(0,4,8);camera.lookAt(0,0,0);
- const renderer=new THREE.WebGLRenderer({antialias:true});
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
- renderer.setSize(host.clientWidth||300,host.clientHeight||210);
- host.replaceChildren(renderer.domElement);
- scene.add(new THREE.HemisphereLight(0x9beeff,0x202040,2));
- const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(3,8,5);scene.add(light);
- const world={host,scene,camera,renderer};scenes3d[id]=world;
- const resize=()=>{const w=host.clientWidth||300,h=host.clientHeight||210;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)};
- if(window.ResizeObserver)new ResizeObserver(resize).observe(host);
- window.addEventListener("resize",resize);
- return world;
-}
-function cube(scene,color,x,y,z,sx=1,sy=1,sz=1){
- const m=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),new THREE.MeshStandardMaterial({color,roughness:.35,metalness:.3}));
- m.position.set(x,y,z);scene.add(m);return m;
-}
-
-function sphere(scene,color,x,y,z,r=0.3,detail=16){
- const m=new THREE.Mesh(new THREE.SphereGeometry(r,detail,detail),new THREE.MeshStandardMaterial({color,roughness:.32,metalness:.18}));
- m.position.set(x,y,z);scene.add(m);return m;
-}
-function addRunnerHero(scene){
- const g=new THREE.Group();
- const mat=(color,roughness=.35)=>new THREE.MeshStandardMaterial({color,roughness,metalness:.15});
- const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.22,.38,4,8),mat(0x00d9ff));torso.position.y=.75;g.add(torso);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.19,16,12),mat(0xffc9a0));head.position.y=1.18;g.add(head);
- const visor=new THREE.Mesh(new THREE.BoxGeometry(.27,.07,.06),mat(0x10233f));visor.position.set(0,1.2,.16);g.add(visor);
- for(const x of [-.13,.13]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.13,.38,.15),mat(0x304a7b));leg.position.set(x,.25,0);g.add(leg);
- const arm=new THREE.Mesh(new THREE.BoxGeometry(.11,.34,.12),mat(0x00a9cc));arm.position.set(x*2,.77,0);arm.rotation.z=x<0?-.25:.25;g.add(arm);}
- g.position.set(0,0,2);scene.add(g);return g;
-}
-function addSportsCar(scene,color,x,y,z){
- const g=new THREE.Group(), paint=new THREE.MeshStandardMaterial({color,metalness:.65,roughness:.23});
- function part(geo,mat,px,py,pz){const m=new THREE.Mesh(geo,mat);m.position.set(px,py,pz);g.add(m);return m;}
- part(new THREE.BoxGeometry(.95,.25,1.55),paint,0,.32,0);
- part(new THREE.BoxGeometry(.68,.27,.72),new THREE.MeshStandardMaterial({color:0x14283c,metalness:.4,roughness:.18}),0,.55,-.12);
- part(new THREE.BoxGeometry(.7,.05,.13),new THREE.MeshStandardMaterial({color:0xffffff,emissive:0x88ddff,emissiveIntensity:1.5}),0,.36,.79);
- for(const x of [-.49,.49])for(const z of [-.48,.48]){
-  const wheel=part(new THREE.CylinderGeometry(.17,.17,.12,16),new THREE.MeshStandardMaterial({color:0x10131b,roughness:.8}),x,.18,z);wheel.rotation.z=Math.PI/2;
-  part(new THREE.CylinderGeometry(.08,.08,.125,12),new THREE.MeshStandardMaterial({color:0x9cb5ca,metalness:.8}),x,.18,z).rotation.z=Math.PI/2;
- }
- g.position.set(x,y,z);scene.add(g);return g;
-}
-function addZombieModel(scene,x,z){
- const g=new THREE.Group(),skin=new THREE.MeshStandardMaterial({color:0x67b56b,roughness:.8}),cloth=new THREE.MeshStandardMaterial({color:0x394c42,roughness:1});
- function part(geo,mat,px,py,pz){const m=new THREE.Mesh(geo,mat);m.position.set(px,py,pz);g.add(m);return m;}
- part(new THREE.BoxGeometry(.48,.62,.3),cloth,0,.62,0);
- part(new THREE.SphereGeometry(.24,14,12),skin,0,1.12,0);
- for(const ex of [-.09,.09])part(new THREE.SphereGeometry(.045,8,8),new THREE.MeshStandardMaterial({color:0xff2929,emissive:0x8b0000}),ex,1.15,.2);
- for(const lx of [-.15,.15]){part(new THREE.BoxGeometry(.14,.4,.15),cloth,lx,.22,0);part(new THREE.BoxGeometry(.12,.48,.13),skin,lx*2,.65,0);}
- g.position.set(x,0,z);scene.add(g);return g;
-}
-function addSpaceShip(scene){
- const g=new THREE.Group(),metal=new THREE.MeshStandardMaterial({color:0x1a6d9b,metalness:.8,roughness:.2}),glow=new THREE.MeshStandardMaterial({color:0x00eaff,emissive:0x00aacc,emissiveIntensity:1.8});
- function part(geo,mat,x,y,z){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m;}
- part(new THREE.ConeGeometry(.32,.85,5),metal,0,.12,0).rotation.x=-Math.PI/2;
- part(new THREE.BoxGeometry(.72,.08,.32),metal,0,-.05,.08);
- part(new THREE.SphereGeometry(.14,12,10),glow,0,.13,.05);
- for(const x of [-.22,.22])part(new THREE.CylinderGeometry(.045,.08,.3,10),glow,x,-.12,-.18);
- g.position.set(0,.35,2);scene.add(g);return g;
-}
-// 1. Neon Runner 3D
-let runnerLane=0,runnerLive=false,runnerScore=0,runnerObs=[];
-(function(){
- const w=makeWorld("runner3d");if(!w)return;
- w.camera.position.set(0,4,7);w.camera.lookAt(0,0,-3);
- cube(w.scene,0x15223d,0,-.25,-4,5,.3,18);
- for(let x=-1;x<=1;x++)cube(w.scene,0x00eaff,x*1.3,.01,-4,.035,.02,18);
- for(let i=0;i<18;i++){const z=2-i*1.2;cube(w.scene,0x142b48,-3,.25,z,.12,.5,.12);cube(w.scene,0x142b48,3,.25,z,.12,.5,.12);}
- const player=addRunnerHero(w.scene);
- w.tick=()=>{
-  player.position.x=runnerLane*1.3; player.rotation.z=Math.sin(Date.now()*.008)*.035;
-  runnerObs.forEach(o=>o.position.z+=.12);
-  runnerObs=runnerObs.filter(o=>{
-   if(o.position.z>4){w.scene.remove(o);return false}
-   if(runnerLive&&Math.abs(o.position.z-2)<.55&&Math.abs(o.position.x-player.position.x)<.65){
-    runnerLive=false;$("runnerOut").textContent="Crash! Score: "+runnerScore+". Restart to play.";
-   }
-   return true;
-  });
-  if(runnerLive){
-   runnerScore++;$("runnerOut").textContent="Distance: "+runnerScore;
-   if(Math.random()<.025)runnerObs.push(cube(w.scene,0xff3864,([-1,0,1][Math.random()*3|0])*1.3,.45,-10,.7,.8,.7));
-  }
- };
-})();
-function runnerStart(){
- runnerLane=0;runnerLive=true;runnerScore=0;
- if(scenes3d.runner3d)runnerObs.forEach(o=>scenes3d.runner3d.scene.remove(o));
- runnerObs=[];$("runnerOut").textContent="Run! Dodge the blocks.";
-}
-function runnerMove(d){runnerLane=Math.max(-1,Math.min(1,runnerLane+d))}
-
-// 2. Zombie Survival 3D
-let zombieScore=0,zombies=[];
-(function(){
- const w=makeWorld("zombie3d");if(!w)return;
- w.camera.position.set(0,5,8);w.camera.lookAt(0,0,0);
- cube(w.scene,0x18251f,0,-.3,0,10,.3,10);
- function addZombie(){
-  const x=(Math.random()-.5)*5,z=(Math.random()-.5)*3;
-  const g=addZombieModel(w.scene,x,z);zombies.push(g);
- }
- for(let i=0;i<5;i++)addZombie();
- w.renderer.domElement.addEventListener("click",e=>{
-  const r=w.renderer.domElement.getBoundingClientRect();
-  const mouse=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
-  const ray=new THREE.Raycaster();ray.setFromCamera(mouse,w.camera);
-  const hits=ray.intersectObjects(zombies,true);
-  if(!hits.length)return;
-  let g=hits[0].object;
-  while(g.parent&&g.parent!==w.scene)g=g.parent;
-  w.scene.remove(g);zombies=zombies.filter(z=>z!==g);
-  zombieScore++;$("zombieOut").textContent="Zombies tagged: "+zombieScore;
-  while(zombies.length<5)addZombie();
- });
-})();
-function zombieMove(dx,dz){
- const w=scenes3d.zombie3d;if(!w)return;
- w.camera.position.x=Math.max(-3,Math.min(3,w.camera.position.x+dx*.4));
- w.camera.position.z=Math.max(5,Math.min(10,w.camera.position.z+dz*.4));
-}
-
-// 3. 3D Drift Drive
-let driveLane=0,driveDistance=0,driveObs=[];
-(function(){
- const w=makeWorld("drive3d");if(!w)return;
- w.camera.position.set(0,4,8);w.camera.lookAt(0,0,-2);
- cube(w.scene,0x242b3a,0,-.3,-4,5,.3,20);
- for(const x of [-1.3,1.3])cube(w.scene,0x00eaff,x,-.12,-4,.04,.04,20);
- for(let i=0;i<18;i++){const z=3-i*1.3;cube(w.scene,0x526174,-3.2,.15,z,.18,.3,.18);cube(w.scene,0x526174,3.2,.15,z,.18,.3,.18);}
- const car=addSportsCar(w.scene,0xffb703,driveLane*1.3,0,2);
-
-  w.tick=()=>{
-    car.position.x=driveLane*1.3; car.rotation.y=Math.sin(Date.now()*.003)*.025;
-    driveObs.forEach(o=>o.position.z+=.15);
-
-    driveObs=driveObs.filter(o=>{
-      if(o.position.z>5){
-        w.scene.remove(o);
-        return false;
-      }
-
-      if(
-        Math.abs(o.position.z-2)<.7 &&
-        Math.abs(o.position.x-car.position.x)<.8
-      ){
-        $("driveOut").textContent=
-          "Crash! Distance: "+driveDistance+" — refresh to retry.";
-      }
-
-      return true;
-    });
-
-    driveDistance++;
-    $("driveOut").textContent="Distance: "+driveDistance;
-
-    if(Math.random()<.025){
-      const lane=([-1,0,1][Math.random()*3|0]);
-      driveObs.push(
-        addSportsCar(w.scene,0xff3864,lane*1.3,0,-12)
-      );
-    }
-  };
-})();
-function driveMove(d){
-  driveLane=Math.max(-1,Math.min(1,driveLane+d));
-}
-
-// 4. Space Blaster 3D
-let spaceLane=0,spaceScore=0,spaceShots=[],spaceTargets=[];
-
-(function(){
-  const w=makeWorld("space3d",0x030014);
-  if(!w)return;
-
-  w.camera.position.set(0,4,8);
-  w.camera.lookAt(0,0,-3);
-
-  cube(w.scene,0x171737,0,-.4,-4,8,.3,20);
-
-  const ship=cube(
-    w.scene,0x00eaff,0,.35,2,.6,.35,.9
-  );
-
-  for(let i=0;i<35;i++){
-    const star=cube(
-      w.scene,0xffffff,
-      (Math.random()-.5)*8,
-      Math.random()*4,
-      -Math.random()*20,
-      .035,.035,.035
-    );
-  }
-
-  function addTarget(){
-    const target=cube(
-      w.scene,0xff3864,
-      ([-1,0,1][Math.random()*3|0])*1.3,
-      .4,
-      -12,
-      .6,.6,.6
-    );
-    spaceTargets.push(target);
-  }
-
-  for(let i=0;i<4;i++)addTarget();
-
-  w.tick=()=>{
-    ship.position.x=spaceLane*1.3;
-
-    spaceTargets.forEach(t=>t.position.z+=.09);
-    spaceShots.forEach(s=>s.position.z-=.25);
-
-    spaceShots=spaceShots.filter(s=>{
-      if(s.position.z < -18){
-        w.scene.remove(s);
-        return false;
-      }
-      return true;
-    });
-
-    spaceTargets=spaceTargets.filter(t=>{
-      const hit=spaceShots.some(s=>
-        Math.abs(s.position.x-t.position.x)<.5 &&
-        Math.abs(s.position.z-t.position.z)<.6
-      );
-
-      if(hit){
-        w.scene.remove(t);
-        spaceScore++;
-        $("spaceOut").textContent="Targets hit: "+spaceScore;
-        return false;
-      }
-
-      if(t.position.z>5){
-        t.position.z=-12;
-        t.position.x=([-1,0,1][Math.random()*3|0])*1.3;
-      }
-
-      return true;
-    });
-
-    while(spaceTargets.length<4)addTarget();
-  };
-})();
-
-function spaceMove(d){
-  spaceLane=Math.max(-1,Math.min(1,spaceLane+d));
-}
-
-function spaceShoot(){
-  const w=scenes3d.space3d;
-  if(!w)return;
-
-  const shot=cube(
-    w.scene,0x00eaff,spaceLane*1.3,.4,1,.12,.12,.5
-  );
-
-  spaceShots.push(shot);
-}
-
-// Three.js animation loop
-function animate3D(){
-  requestAnimationFrame(animate3D);
+// Graphics quality preference
+if($("gfxQuality")){
+ $("gfxQuality").addEventListener("change",()=>{
+  const quality=$("gfxQuality").value;
+  const pixelRatio=quality==="low"?1:
+                   quality==="medium"?1.25:
+                   quality==="high"?1.75:
+                   quality==="ultra"?2:
+                   Math.min(window.devicePixelRatio||1,1.5);
 
   Object.values(scenes3d).forEach(w=>{
-    if(!w)return;
-
-    if(typeof w.tick==="function")w.tick();
-
-    w.renderer.render(w.scene,w.camera);
+   if(w&&w.renderer){
+    w.renderer.setPixelRatio(pixelRatio);
+    w.renderer.setSize(w.host.clientWidth||300,w.host.clientHeight||210);
+   }
   });
-}
-
-if(window.THREE){
-  animate3D();
+ });
 }
 // Terminal commands
 function command(){
-  const input=$("cmd");
-  const out=$("out");
-  const cmd=input.value.trim().toLowerCase();
+ const input=$("cmd");
+ const output=$("out");
+ if(!input||!output)return;
 
-  if(!cmd)return;
+ const cmd=input.value.trim().toLowerCase();
+ input.value="";
+ if(!cmd)return;
 
-  const commands={
-    help:
-      "Available commands:\n"+
-      "help, about, games, racing, date,\n"+
-      "browser, device, network, clear",
+ const commands={
+  help:"Available commands: help, about, games, racing, date, browser, device, network, clear",
+  about:"LAKSHMAN_2018 — Welcome to my Digital World!",
+  games:"Available games: Mini-games, Racing Arena, Neon Runner, Zombie Survival, Drift Drive and Space Blaster.",
+  racing:"Racing Arena: Use the left and right arrow buttons to avoid obstacles.",
+  date:new Date().toLocaleString(),
+  browser:"Browser: "+navigator.userAgent,
+  device:"Screen: "+screen.width+" × "+screen.height,
+  network:navigator.onLine?"Network status: Online":"Network status: Offline"
+ };
 
-    about:
-      "ItsLakshman2018 — Creator | Gamer | Digital Explorer",
+ if(cmd==="clear"){
+  output.textContent="Terminal cleared. Type help to see commands.";
+  return;
+ }
 
-    games:
-      "Available games:\n"+
-      "Number Guess, Rock Paper Scissors,\n"+
-      "Reflex Test, Memory Matrix, Snake,\n"+
-      "Neon Runner 3D, Zombie Survival 3D,\n"+
-      "3D Drift Drive, Space Blaster 3D",
-
-    racing:
-      "Neon Racing Arena is ready.\n"+
-      "Choose a vehicle and press START RACE.",
-
-    date:
-      new Date().toLocaleString(),
-
-    browser:
-      "Browser: "+navigator.userAgent,
-
-    device:
-      "Screen: "+screen.width+" x "+screen.height,
-
-    network:
-      navigator.onLine
-        ? "Browser reports that you are online."
-        : "Browser reports that you are offline.",
-
-    clear:""
-  };
-
-  if(cmd==="clear"){
-    out.textContent="Terminal cleared.";
-  }else{
-    out.textContent+="\n\n> "+input.value+"\n"+
-      (commands[cmd]||"Unknown command. Type help.");
-  }
-
-  out.scrollTop=out.scrollHeight;
-  input.value="";
+ output.textContent+="\n\n> "+cmd+"\n"+(commands[cmd]||"Unknown command. Type help to see available commands.");
 }
 
-// Keyboard support for 3D games
-document.addEventListener("keydown",e=>{
-  if(["INPUT","TEXTAREA"].includes(
-    document.activeElement.tagName
-  ))return;
+// Terminal Enter key
+if($("cmd")){
+ $("cmd").addEventListener("keydown",e=>{
+  if(e.key==="Enter")command();
+ });
+}
 
-  if(e.key==="ArrowLeft"){
-    runnerMove(-1);
-    driveMove(-1);
-    spaceMove(-1);
-  }
+// Update footer year
+if($("year"))$("year").textContent=new Date().getFullYear();
 
-  if(e.key==="ArrowRight"){
-    runnerMove(1);
-    driveMove(1);
-    spaceMove(1);
-  }
+// Settings defaults
+const settingsDefaults={
+ gfxQuality:"auto",
+ masterVolume:"0.8",
+ musicVolume:"0.5",
+ sfxVolume:"0.8"
+};
 
-  if(e.code==="Space"){
-    e.preventDefault();
-    spaceShoot();
+function loadSettings(){
+ Object.entries(settingsDefaults).forEach(([id,value])=>{
+  const el=$(id);
+  if(!el)return;
+  try{
+   el.value=localStorage.getItem("lakshman_"+id)||value;
+  }catch(err){
+   el.value=value;
   }
+ });
+}
+
+function saveSettings(){
+ Object.keys(settingsDefaults).forEach(id=>{
+  const el=$(id);
+  if(!el)return;
+  try{
+   localStorage.setItem("lakshman_"+id,el.value);
+  }catch(err){}
+ });
+
+ if($("saveStatus"))$("saveStatus").textContent="Settings saved on this device.";
+}
+
+loadSettings();
+
+["gfxQuality","masterVolume","musicVolume","sfxVolume"].forEach(id=>{
+ const el=$(id);
+ if(el){
+  el.addEventListener("change",saveSettings);
+  el.addEventListener("input",()=>{
+   if(id!=="gfxQuality")saveSettings();
+  });
+ }
 });
 
-// Keep the road drawing updated
-$("vehicle").addEventListener("change",drawRoad);
+if($("saveNow"))$("saveNow").addEventListener("click",saveSettings);
+// Player progress and XP
+let playerXP=0;
+let playerLevel=1;
 
-// Flask routes are defined below in Python.
-</script>
-</body>
-</html>
-"""
+function addXP(amount){
+ playerXP+=Math.max(0,Number(amount)||0);
+ playerLevel=Math.floor(playerXP/100)+1;
 
-@app.route("/")
-def home():
-    return render_template_string(HTML)
+ if($("playerXP"))$("playerXP").textContent=playerXP;
+ if($("playerLevel"))$("playerLevel").textContent=playerLevel;
 
-@app.route("/health")
-def health():
-    return {"status": "ok"}
+ saveProgress();
+}
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+function saveProgress(){
+ try{
+  localStorage.setItem("lakshman_playerXP",String(playerXP));
+  localStorage.setItem("lakshman_playerLevel",String(playerLevel));
+ }catch(err){}
+}
+
+function loadProgress(){
+ try{
+  playerXP=Math.max(0,Number(localStorage.getItem("lakshman_playerXP"))||0);
+  playerLevel=Math.floor(playerXP/100)+1;
+ }catch(err){
+  playerXP=0;
+  playerLevel=1;
+ }
+
+ if($("playerXP"))$("playerXP").textContent=playerXP;
+ if($("playerLevel"))$("playerLevel").textContent=playerLevel;
+}
+
+loadProgress();
+
+// Online/offline indicator
+window.addEventListener("online",()=>{
+ if($("saveStatus"))$("saveStatus").textContent="Internet connected.";
+});
+
+window.addEventListener("offline",()=>{
+ if($("saveStatus"))$("saveStatus").textContent="Offline. Local games remain available.";
+});
+
+// Finish page initialization
+window.addEventListener("load",()=>{
+ if($("year"))$("year").textContent=new Date().getFullYear();
+ console.log("LAKSHMAN_2018 Digital World loaded.");
+});
